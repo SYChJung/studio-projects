@@ -19,21 +19,46 @@
 			.cool_text{
 				font-size:11px;
 				font-family:verdana;
+				alignment-baseline: auto;
+				/*vertical-align: text-bottom;*/
 			}
 			.cool_text_dom{
 				font-size:10px;
 				font-family:verdana;
 			}
 
-			.cool_rect_life{
+
+			.cool_rect_life.Spain{
 			    -webkit-transition: fill .2s; /* Safari */
 			            transition: fill .2s;
 				fill: turquoise;
 			}
-			.cool_rect_reign{
+			.cool_rect_life.Aragon{
+			    -webkit-transition: fill .2s;
+			            transition: fill .2s;
+				fill: orange;
+			}
+			.cool_rect_life.Castile{
+			    -webkit-transition: fill .2s; 
+			            transition: fill .2s;
+				fill: yellow;
+			}
+
+
+			.cool_rect_reign.Spain{
 			    -webkit-transition: fill .2s; /* Safari */
 			            transition: fill .2s;
 				fill: #558;
+			}
+			.cool_rect_reign.Aragon{
+			    -webkit-transition: fill .2s; /* Safari */
+			            transition: fill .2s;
+				fill: #654;
+			}
+			.cool_rect_reign.Castile{
+			    -webkit-transition: fill .2s; /* Safari */
+			            transition: fill .2s;
+				fill: #754;
 			}
 			.cool_rect_life.selected{
 			    -webkit-transition: fill .2s; /* Safari */
@@ -46,9 +71,45 @@
 				fill : #f33;
 			}
 
+			div.tooltip {	
+			    -webkit-transition: fill .2s; /* Safari */
+			            transition: fill .2s;
+			    position: absolute;			
+			    /*width: 300px;					*/
+			    /*height: 20px;					*/
+			    padding: 5px;
+			    border: 0px;		
+			    border-radius: 3px;			
+
+			    text-align: center;	
+			    font: 15px sans-serif;		
+			    /*background: lightsteelblue;*/
+			    background: #001;
+			    color: white;
+			    opacity: 0;
+			    pointer-events: none;
+			}
+			div.tooltip.selected{
+			    -webkit-transition: fill .2s; /* Safari */
+			            transition: fill .2s;
+			    opacity: 0.9;
+			}
+			.cool_text_description{
+				font-size:15px;
+				font-family:verdana;
+				alignment-baseline: auto;
+				/*vertical-align: text-bottom;*/
+			}
 		</style>
 	</head>
 	<body>
+		<p class="cool_text_description">
+			This is a graph showing Spanish monarchs, along with those of Aragon and Castile. I included Aragon and Castile on the graph, as the kingdom of Spain was founded by the union of Ferdinand II of Aragon and Isabella I of Castile.
+			<br>
+			The orange boxes show the lineage of Aragonese monarchs, the yellow boxes the lineage of Castilian monarchs, and turquoise boxes the lineage of Spanish monarchs.
+			<br>
+			Each box indicates the lifespan of the monarch, of which the darker colored section indicates the reign. If you move your mouse over the box, more information shows up: name, kingdom, house, familial relationship to a previous monarch, year of birth, year of death, start year of reign, end year of reign.
+		</p>
 		<div id="family_tree_chart"></div>
 
 		<script type="text/javascript">
@@ -56,126 +117,159 @@
 
 			// 1. data
 			var family_tree_data = [
-				{"Kingdom":"Kingdom of Aragon","Name":"Ramiro I","House":"House Jim\u00e9nez","Family":"son of Sancho III of Navarre and Sancha de Aybar","Year of birth":"1007","Year of death":"1063","Year of Reign begin":"1035","Year of Reign end":"1063"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Sancho Ram\u00edrez","House":"House Jim\u00e9nez","Family":"son of Ramiro I of Aragon and Ermesinda of Bigorre","Year of birth":"1042","Year of death":"1094","Year of Reign begin":"1076","Year of Reign end":"1094"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Peter I","House":"House Jim\u00e9nez","Family":"son of Sancho Ram\u00edrez and Isabel of Urgel","Year of birth":"1068","Year of death":"1104","Year of Reign begin":"1094","Year of Reign end":"1104"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso I the Battler","House":"House Jim\u00e9nez","Family":"son of Sancho Ram\u00edrez, King of Arag\u00f3n and Navarre and Felicie de Roucy","Year of birth":"1073","Year of death":"1134","Year of Reign begin":"1104","Year of Reign end":"1134"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Ramiro II the Monk","House":"House Jim\u00e9nez","Family":"son of Sancho Ram\u00edrez and Felicie de Roucy","Year of birth":"1086","Year of death":"1157","Year of Reign begin":"1134","Year of Reign end":"1137"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Petronilla","House":"House Jim\u00e9nez","Family":"daughter of Ramiro II of Aragon and Agnes of Aquitaine","Year of birth":"1136","Year of death":"1174","Year of Reign begin":"1137","Year of Reign end":"1164"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso II","House":"House Barcelona","Family":"son of Ramon Berenguer IV of Barcelona and Petronilla of Aragon","Year of birth":"1157","Year of death":"1196","Year of Reign begin":"1164","Year of Reign end":"1196"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Peter II","House":"House Barcelona","Family":"son of Alfonso II of Aragon and Sancha of Castile","Year of birth":"1178","Year of death":"1213","Year of Reign begin":"1196","Year of Reign end":"1213"},
-				{"Kingdom":"Kingdom of Aragon","Name":"James I","House":"House Barcelona","Family":"son of Peter II of Aragon and Marie of Montpellier","Year of birth":"1208","Year of death":"1276","Year of Reign begin":"1213","Year of Reign end":"1276"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Peter III","House":"House Barcelona","Family":"son of James I of Aragon and Yolanda of Hungary","Year of birth":"1240","Year of death":"1285","Year of Reign begin":"1276","Year of Reign end":"1285"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso III","House":"House Barcelona","Family":"son of Peter III of Aragon and Constance of Sicily","Year of birth":"1265","Year of death":"1291","Year of Reign begin":"1285","Year of Reign end":"1291"},
-				{"Kingdom":"Kingdom of Aragon","Name":"James II","House":"House Barcelona","Family":"son of Peter III and Constance of Sicily","Year of birth":"1267","Year of death":"1327","Year of Reign begin":"1291","Year of Reign end":"1327"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso IV","House":"House Barcelona","Family":"son of James II of Aragon and Blanche of Anjou","Year of birth":"1299","Year of death":"1336","Year of Reign begin":"1327","Year of Reign end":"1336"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Peter IV","House":"House Barcelona","Family":"son of Alfonso IV and Teresa d'Enten\u00e7a","Year of birth":"1319","Year of death":"1387","Year of Reign begin":"1336","Year of Reign end":"1387"},
-				{"Kingdom":"Kingdom of Aragon","Name":"John I","House":"House Barcelona","Family":"son of Peter IV of Aragon and Eleanor of Sicily","Year of birth":"1350","Year of death":"1396","Year of Reign begin":"1387","Year of Reign end":"1396"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Martin","House":"House Barcelona","Family":"son of Peter IV of Aragon and Eleanor of Sicily","Year of birth":"1356","Year of death":"1410","Year of Reign begin":"1396","Year of Reign end":"1410"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Ferdinand I the Honest","House":"House Trast\u00e1mara","Family":"son of John I of Castile and Eleanor of Aragon","Year of birth":"1380","Year of death":"1416","Year of Reign begin":"1412","Year of Reign end":"1416"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso V the Magnanimous","House":"House Trast\u00e1mara","Family":"son of Ferdinand I and Eleanor of Alburquerque","Year of birth":"1396","Year of death":"1458","Year of Reign begin":"1416","Year of Reign end":"1458"},
-				{"Kingdom":"Kingdom of Aragon","Name":"John II the Great","House":"House Trast\u00e1mara","Family":"son of Ferdinand I and Eleanor of Alburquerque","Year of birth":"1397","Year of death":"1479","Year of Reign begin":"1458","Year of Reign end":"1479"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Ferdinand II the Catholic","House":"House Trast\u00e1mara","Family":"son of John II of Aragon and Juana Enriquez","Year of birth":"1452","Year of death":"1516","Year of Reign begin":"1479","Year of Reign end":"1516"},
-				{"Kingdom":"Kingdom of Aragon","Name":"Joanna I the Mad","House":"House Trast\u00e1mara","Family":"daughter of Ferdinand II of Aragon and Isabella I of Castile","Year of birth":"1479","Year of death":"1555","Year of Reign begin":"1516","Year of Reign end":"1555"},
-				{"Kingdom":"Kingdom of Castile","Name":"Ferdinand I","House":"House Jim\u00e9nez","Family":null,"Year of birth":"1015","Year of death":"1065","Year of Reign begin":"1037","Year of Reign end":"1065"},
-				{"Kingdom":"Kingdom of Castile","Name":"Sancho II","House":"House Jim\u00e9nez","Family":null,"Year of birth":"1036","Year of death":"1072","Year of Reign begin":"1065","Year of Reign end":"1072"},
-				{"Kingdom":"Kingdom of Castile","Name":"Alfonso VI","House":"House Jim\u00e9nez","Family":null,"Year of birth":"1040","Year of death":"1109","Year of Reign begin":"1072","Year of Reign end":"1109"},
-				{"Kingdom":"Kingdom of Castile","Name":"Urraca","House":"House Jim\u00e9nez","Family":null,"Year of birth":"1079","Year of death":"1126","Year of Reign begin":"1109","Year of Reign end":"1126"},
-				{"Kingdom":"Kingdom of Castile","Name":"Alfonso VII","House":"House Ivrea","Family":null,"Year of birth":"1105","Year of death":"1157","Year of Reign begin":"1126","Year of Reign end":"1157"},
-				{"Kingdom":"Kingdom of Castile","Name":"Sancho III","House":"House Ivrea","Family":null,"Year of birth":"1134","Year of death":"1158","Year of Reign begin":"1157","Year of Reign end":"1158"},
-				{"Kingdom":"Kingdom of Castile","Name":"Alfonso VIII","House":"House Ivrea","Family":null,"Year of birth":"1155","Year of death":"1214","Year of Reign begin":"1158","Year of Reign end":"1214"},
-				{"Kingdom":"Kingdom of Castile","Name":"Henry I","House":"House Ivrea","Family":null,"Year of birth":"1204","Year of death":"1217","Year of Reign begin":"1214","Year of Reign end":"1217"},
-				{"Kingdom":"Kingdom of Castile","Name":"Berengaria","House":"House Ivrea","Family":null,"Year of birth":"1179","Year of death":"1246","Year of Reign begin":"1217","Year of Reign end":"1217"},
-				{"Kingdom":"Kingdom of Castile","Name":"Ferdinand III","House":"House Ivrea","Family":null,"Year of birth":"1199","Year of death":"1252","Year of Reign begin":"1217","Year of Reign end":"1252"},
-				{"Kingdom":"Kingdom of Castile","Name":"Alfonso X","House":"House Ivrea","Family":null,"Year of birth":"1221","Year of death":"1284","Year of Reign begin":"1252","Year of Reign end":"1284"},
-				{"Kingdom":"Kingdom of Castile","Name":"Sancho IV","House":"House Ivrea","Family":null,"Year of birth":"1258","Year of death":"1295","Year of Reign begin":"1284","Year of Reign end":"1295"},
-				{"Kingdom":"Kingdom of Castile","Name":"Ferdinand IV","House":"House Ivrea","Family":null,"Year of birth":"1285","Year of death":"1312","Year of Reign begin":"1295","Year of Reign end":"1312"},
-				{"Kingdom":"Kingdom of Castile","Name":"Alfonso XI","House":"House Ivrea","Family":null,"Year of birth":"1311","Year of death":"1350","Year of Reign begin":"1312","Year of Reign end":"1350"},
-				{"Kingdom":"Kingdom of Castile","Name":"Peter","House":"House Ivrea","Family":null,"Year of birth":"1334","Year of death":"1369","Year of Reign begin":"1350","Year of Reign end":"1369"},
-				{"Kingdom":"Kingdom of Castile","Name":"Henry II","House":"House Trast\u00e1mara","Family":null,"Year of birth":"1334","Year of death":"1379","Year of Reign begin":"1369","Year of Reign end":"1379"},
-				{"Kingdom":"Kingdom of Castile","Name":"John I","House":"House Trast\u00e1mara","Family":null,"Year of birth":"1358","Year of death":"1390","Year of Reign begin":"1379","Year of Reign end":"1390"},
-				{"Kingdom":"Kingdom of Castile","Name":"Henry III","House":"House Trast\u00e1mara","Family":null,"Year of birth":"1379","Year of death":"1406","Year of Reign begin":"1390","Year of Reign end":"1406"},
-				{"Kingdom":"Kingdom of Castile","Name":"John II","House":"House Trast\u00e1mara","Family":null,"Year of birth":"1405","Year of death":"1454","Year of Reign begin":"1406","Year of Reign end":"1454"},
-				{"Kingdom":"Kingdom of Castile","Name":"Henry IV","House":"House Trast\u00e1mara","Family":null,"Year of birth":"1425","Year of death":"1474","Year of Reign begin":"1454","Year of Reign end":"1474"},
-				{"Kingdom":"Kingdom of Castile","Name":"Isabella I","House":"House Trast\u00e1mara","Family":null,"Year of birth":"1451","Year of death":"1504","Year of Reign begin":"1474","Year of Reign end":"1504"},
-				{"Kingdom":"Kingdom of Castile","Name":"Ferdinand V","House":"House Trast\u00e1mara","Family":null,"Year of birth":"1452","Year of death":"1516","Year of Reign begin":"1475","Year of Reign end":"1504"},
-				{"Kingdom":"Kingdom of Castile","Name":"Joanna","House":"House Trast\u00e1mara","Family":null,"Year of birth":null,"Year of death":null,"Year of Reign begin":"1504","Year of Reign end":"1555"},
-				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand V & II","House":"House Trast\u00e1mara","Family":"Son of John II of Aragon and Juana Enr\u00edquez","Year of birth":"1452","Year of death":"1516","Year of Reign begin":"1475","Year of Reign end":"1516"},
-				{"Kingdom":"Kingdom of Spain","Name":"Isabella I","House":"House Trast\u00e1mara","Family":"Daughter of John II of Castile and Isabella of Portugal","Year of birth":"1451","Year of death":"1504","Year of Reign begin":"1474","Year of Reign end":"1504"},
-				{"Kingdom":"Kingdom of Spain","Name":"Joanna","House":"House Trast\u00e1mara","Family":"Daughter of Isabella I of Castile and Ferdinand II of Aragon","Year of birth":"1479","Year of death":"1555","Year of Reign begin":"1504","Year of Reign end":"1555"},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip I","House":"House Habsburg","Family":"Husband of Joanna of Castile","Year of birth":"1478","Year of death":"1506","Year of Reign begin":"1506","Year of Reign end":"1506"},
-				{"Kingdom":"Kingdom of Spain","Name":"Charles I\n\n\nthe Emperor\nSpanish: Carlos I\n\n\n","House":"House Habsburg","Family":"Son of Joanna and Philip I of Castile","Year of birth":"1500","Year of death":"1558","Year of Reign begin":"1516","Year of Reign end":"1556"},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip II\n\n\nthe Prudent\nSpanish: Felipe II\n\n\n","House":"House Habsburg","Family":"Son of Charles I","Year of birth":"1527","Year of death":"1598","Year of Reign begin":"1556","Year of Reign end":"1598"},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip III\n\n\nthe Pious\nSpanish: Felipe III\n\n\n","House":"House Habsburg","Family":"Son of Philip II","Year of birth":"1578","Year of death":"1621","Year of Reign begin":"1598","Year of Reign end":"1621"},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip IV\n\n\nthe Great\nSpanish: Felipe IV\n\n\n","House":"House Habsburg","Family":"Son of Philip III","Year of birth":"1605","Year of death":"1665","Year of Reign begin":"1621","Year of Reign end":"1665"},
-				{"Kingdom":"Kingdom of Spain","Name":"Charles II\n\n\nthe Bewitched\nSpanish: Carlos II\n\n\n","House":"House Habsburg","Family":"Son of Philip IV","Year of birth":"1661","Year of death":"1700","Year of Reign begin":"1665","Year of Reign end":"1700"},
-				{"Kingdom":"Kingdom of Spain","Name":"Archduke Charles of Austria,\nas Charles III\nArchiduque Carlos, (Carlos III)","House":"House Disputed claimant of the House of Habsburg","Family":"great-grandson of Philip III","Year of birth":"1685","Year of death":"1740","Year of Reign begin":"1703","Year of Reign end":null},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip V\n\n\nthe Spirited\nSpanish: Felipe V\n\n\n","House":"House Bourbon","Family":"Great-grandson of Philip IV","Year of birth":"1683","Year of death":"1746","Year of Reign begin":"1700","Year of Reign end":"1724"},
-				{"Kingdom":"Kingdom of Spain","Name":"Louis I\n\n\nthe Beloved and the Liberal\nSpanish: Luis I\n\n\n","House":"House Bourbon","Family":"Son of Philip V","Year of birth":"1707","Year of death":"1724","Year of Reign begin":"1724","Year of Reign end":"1724"},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip V\n\n\nthe Spirited\nSpanish: Felipe V\n\n\n","House":"House Bourbon","Family":"Father of Louis I","Year of birth":"1683","Year of death":"1746","Year of Reign begin":"1724","Year of Reign end":"1746"},
-				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VI\n\n\nthe Learned\nSpanish: Fernando VI\n\n\n","House":"House Bourbon","Family":"Son of Philip V","Year of birth":"1713","Year of death":"1759","Year of Reign begin":"1746","Year of Reign end":"1759"},
-				{"Kingdom":"Kingdom of Spain","Name":"Charles III\n\n\nthe Enlightened and the King-Mayor\nSpanish: Carlos III\n\n\n","House":"House Bourbon","Family":"Son of Philip V","Year of birth":"1716","Year of death":"1788","Year of Reign begin":"1759","Year of Reign end":"1788"},
-				{"Kingdom":"Kingdom of Spain","Name":"Charles IV\n\n\nthe Hunter\nSpanish: Carlos IV\n\n\n","House":"House Bourbon","Family":"Son of Charles III","Year of birth":"1748","Year of death":"1819","Year of Reign begin":"1788","Year of Reign end":"1808"},
-				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII\n\n\nthe Desired and the Felon King\nSpanish: Fernando VII\n\n\n","House":"House Bourbon","Family":"Son of Charles IV","Year of birth":"1784","Year of death":"1833","Year of Reign begin":"1808","Year of Reign end":"1808"},
-				{"Kingdom":"Kingdom of Spain","Name":"Joseph I\n\n\nthe Intruder and Bottle Joe\nSpanish: Jos\u00e9 I\n\n\n","House":"House Bonaparte","Family":"The older brother of Emperor Napoleon","Year of birth":"1768","Year of death":"1844","Year of Reign begin":"1808","Year of Reign end":"1813"},
-				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII\n\n\nthe Desired and the Felon King\nSpanish: Fernando VII\n\n\n","House":"House Bourbon","Family":"Son of Charles IV","Year of birth":"1784","Year of death":"1833","Year of Reign begin":"1813","Year of Reign end":"1833"},
-				{"Kingdom":"Kingdom of Spain","Name":"Isabella II\n\n\nthe One with the Sad Destinies\nSpanish: Isabel II\n\n\n","House":"House Bourbon","Family":"Daughter of Ferdinand VII","Year of birth":"1830","Year of death":"1904","Year of Reign begin":"1833","Year of Reign end":"1868"},
-				{"Kingdom":"Kingdom of Spain","Name":"Amadeo I\n\n\n\n\n\n\n","House":"House Savoy","Family":"Elected by Cortes Generales; Great-great-grandson of Charles III","Year of birth":"1845","Year of death":"1890","Year of Reign begin":"1870","Year of Reign end":"1873"},
-				{"Kingdom":"Kingdom of Spain","Name":"Alfonso XII\n\n\nthe Peacemaker\n\n\n\n","House":"House Bourbon","Family":"Son of Isabella II","Year of birth":"1857","Year of death":"1885","Year of Reign begin":"1874","Year of Reign end":"1885"},
-				{"Kingdom":"Kingdom of Spain","Name":"Alfonso XIII\n\n\nthe African\n\n\n\n","House":"House Bourbon","Family":"Posthumous son of Alfonso XII","Year of birth":"1886","Year of death":"1941","Year of Reign begin":"1886","Year of Reign end":"1931"},
-				{"Kingdom":"Kingdom of Spain","Name":"Juan Carlos I\n\n\n[note 1]\n\n\n\n","House":"House Bourbon","Family":"Grandson of Alfonso XIII","Year of birth":"1938","Year of death":"1938","Year of Reign begin":"1975","Year of Reign end":"2014"},
-				{"Kingdom":"Kingdom of Spain","Name":"Felipe VI\n\n\n\n\n\n\n","House":"House Bourbon","Family":"Son of Juan Carlos I","Year of birth":"1968","Year of death":"1968","Year of Reign begin":"2014","Year of Reign end":null}
+				{"Kingdom":"Kingdom of Aragon","Name":"Ramiro I","House":"House of Jim\u00e9nez","Family":"son of Sancho III of Navarre and Sancha de Aybar","Year of birth":"1007","Year of death":"1063","Year of Reign begin":"1035","Year of Reign end":"1063"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Sancho Ram\u00edrez","House":"House of Jim\u00e9nez","Family":"son of Ramiro I of Aragon and Ermesinda of Bigorre","Year of birth":"1042","Year of death":"1094","Year of Reign begin":"1076","Year of Reign end":"1094"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Peter I","House":"House of Jim\u00e9nez","Family":"son of Sancho Ram\u00edrez and Isabel of Urgel","Year of birth":"1068","Year of death":"1104","Year of Reign begin":"1094","Year of Reign end":"1104"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso I the Battler","House":"House of Jim\u00e9nez","Family":"son of Sancho Ram\u00edrez, King of Arag\u00f3n and Navarre and Felicie de Roucy","Year of birth":"1073","Year of death":"1134","Year of Reign begin":"1104","Year of Reign end":"1134"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Ramiro II the Monk","House":"House of Jim\u00e9nez","Family":"son of Sancho Ram\u00edrez and Felicie de Roucy","Year of birth":"1086","Year of death":"1157","Year of Reign begin":"1134","Year of Reign end":"1137"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Petronilla","House":"House of Jim\u00e9nez","Family":"daughter of Ramiro II of Aragon and Agnes of Aquitaine","Year of birth":"1136","Year of death":"1174","Year of Reign begin":"1137","Year of Reign end":"1164"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso II","House":"House of Barcelona","Family":"son of Ramon Berenguer IV of Barcelona and Petronilla of Aragon","Year of birth":"1157","Year of death":"1196","Year of Reign begin":"1164","Year of Reign end":"1196"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Peter II","House":"House of Barcelona","Family":"son of Alfonso II of Aragon and Sancha of Castile","Year of birth":"1178","Year of death":"1213","Year of Reign begin":"1196","Year of Reign end":"1213"},
+				{"Kingdom":"Kingdom of Aragon","Name":"James I","House":"House of Barcelona","Family":"son of Peter II of Aragon and Marie of Montpellier","Year of birth":"1208","Year of death":"1276","Year of Reign begin":"1213","Year of Reign end":"1276"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Peter III","House":"House of Barcelona","Family":"son of James I of Aragon and Yolanda of Hungary","Year of birth":"1240","Year of death":"1285","Year of Reign begin":"1276","Year of Reign end":"1285"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso III","House":"House of Barcelona","Family":"son of Peter III of Aragon and Constance of Sicily","Year of birth":"1265","Year of death":"1291","Year of Reign begin":"1285","Year of Reign end":"1291"},
+				{"Kingdom":"Kingdom of Aragon","Name":"James II","House":"House of Barcelona","Family":"son of Peter III and Constance of Sicily","Year of birth":"1267","Year of death":"1327","Year of Reign begin":"1291","Year of Reign end":"1327"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso IV","House":"House of Barcelona","Family":"son of James II of Aragon and Blanche of Anjou","Year of birth":"1299","Year of death":"1336","Year of Reign begin":"1327","Year of Reign end":"1336"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Peter IV","House":"House of Barcelona","Family":"son of Alfonso IV and Teresa d'Enten\u00e7a","Year of birth":"1319","Year of death":"1387","Year of Reign begin":"1336","Year of Reign end":"1387"},
+				{"Kingdom":"Kingdom of Aragon","Name":"John I","House":"House of Barcelona","Family":"son of Peter IV of Aragon and Eleanor of Sicily","Year of birth":"1350","Year of death":"1396","Year of Reign begin":"1387","Year of Reign end":"1396"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Martin","House":"House of Barcelona","Family":"son of Peter IV of Aragon and Eleanor of Sicily","Year of birth":"1356","Year of death":"1410","Year of Reign begin":"1396","Year of Reign end":"1410"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Ferdinand I the Honest","House":"House of Trast\u00e1mara","Family":"son of John I of Castile and Eleanor of Aragon","Year of birth":"1380","Year of death":"1416","Year of Reign begin":"1412","Year of Reign end":"1416"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Alfonso V the Magnanimous","House":"House of Trast\u00e1mara","Family":"son of Ferdinand I and Eleanor of Alburquerque","Year of birth":"1396","Year of death":"1458","Year of Reign begin":"1416","Year of Reign end":"1458"},
+				{"Kingdom":"Kingdom of Aragon","Name":"John II the Great","House":"House of Trast\u00e1mara","Family":"son of Ferdinand I and Eleanor of Alburquerque","Year of birth":"1397","Year of death":"1479","Year of Reign begin":"1458","Year of Reign end":"1479"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Ferdinand II the Catholic","House":"House of Trast\u00e1mara","Family":"son of John II of Aragon and Juana Enriquez","Year of birth":"1452","Year of death":"1516","Year of Reign begin":"1479","Year of Reign end":"1516"},
+				{"Kingdom":"Kingdom of Aragon","Name":"Joanna I the Mad","House":"House of Trast\u00e1mara","Family":"daughter of Ferdinand II of Aragon and Isabella I of Castile","Year of birth":"1479","Year of death":"1555","Year of Reign begin":"1516","Year of Reign end":"1555"},
+				{"Kingdom":"Kingdom of Castile","Name":"Ferdinand I","House":"House of Jim\u00e9nez","Family":"son of Sancho III of Navarre","Year of birth":"1015","Year of death":"1065","Year of Reign begin":"1037","Year of Reign end":"1065"},
+				{"Kingdom":"Kingdom of Castile","Name":"Sancho II","House":"House of Jim\u00e9nez","Family":"son of Ferdinand I","Year of birth":"1036","Year of death":"1072","Year of Reign begin":"1065","Year of Reign end":"1072"},
+				{"Kingdom":"Kingdom of Castile","Name":"Alfonso VI","House":"House of Jim\u00e9nez","Family":"son of Ferdinand I","Year of birth":"1040","Year of death":"1109","Year of Reign begin":"1072","Year of Reign end":"1109"},
+				{"Kingdom":"Kingdom of Castile","Name":"Urraca","House":"House of Jim\u00e9nez","Family":"daughter of Alfonso VI","Year of birth":"1079","Year of death":"1126","Year of Reign begin":"1109","Year of Reign end":"1126"},
+				{"Kingdom":"Kingdom of Castile","Name":"Alfonso VII","House":"House of Ivrea","Family":"son of Urraca","Year of birth":"1105","Year of death":"1157","Year of Reign begin":"1126","Year of Reign end":"1157"},
+				{"Kingdom":"Kingdom of Castile","Name":"Sancho III","House":"House of Ivrea","Family":"son of Alfonso VII","Year of birth":"1134","Year of death":"1158","Year of Reign begin":"1157","Year of Reign end":"1158"},
+				{"Kingdom":"Kingdom of Castile","Name":"Alfonso VIII","House":"House of Ivrea","Family":"son of Sancho III","Year of birth":"1155","Year of death":"1214","Year of Reign begin":"1158","Year of Reign end":"1214"},
+				{"Kingdom":"Kingdom of Castile","Name":"Henry I","House":"House of Ivrea","Family":"son of Alfonso VIII","Year of birth":"1204","Year of death":"1217","Year of Reign begin":"1214","Year of Reign end":"1217"},
+				{"Kingdom":"Kingdom of Castile","Name":"Berengaria","House":"House of Ivrea","Family":"daughter of Alfonso VIII","Year of birth":"1179","Year of death":"1246","Year of Reign begin":"1217","Year of Reign end":"1217"},
+				{"Kingdom":"Kingdom of Castile","Name":"Ferdinand III","House":"House of Ivrea","Family":"son of Berengaria","Year of birth":"1199","Year of death":"1252","Year of Reign begin":"1217","Year of Reign end":"1252"},
+				{"Kingdom":"Kingdom of Castile","Name":"Alfonso X","House":"House of Ivrea","Family":"son of Ferdinand III","Year of birth":"1221","Year of death":"1284","Year of Reign begin":"1252","Year of Reign end":"1284"},
+				{"Kingdom":"Kingdom of Castile","Name":"Sancho IV","House":"House of Ivrea","Family":"son of Alfonso X","Year of birth":"1258","Year of death":"1295","Year of Reign begin":"1284","Year of Reign end":"1295"},
+				{"Kingdom":"Kingdom of Castile","Name":"Ferdinand IV","House":"House of Ivrea","Family":"son of Sancho IV","Year of birth":"1285","Year of death":"1312","Year of Reign begin":"1295","Year of Reign end":"1312"},
+				{"Kingdom":"Kingdom of Castile","Name":"Alfonso XI","House":"House of Ivrea","Family":"son of Ferdinand IV","Year of birth":"1311","Year of death":"1350","Year of Reign begin":"1312","Year of Reign end":"1350"},
+				{"Kingdom":"Kingdom of Castile","Name":"Peter","House":"House of Ivrea","Family":"son of Alfonso XI","Year of birth":"1334","Year of death":"1369","Year of Reign begin":"1350","Year of Reign end":"1369"},
+				{"Kingdom":"Kingdom of Castile","Name":"Henry II","House":"House of Trast\u00e1mara","Family":"son of Alfonso XI","Year of birth":"1334","Year of death":"1379","Year of Reign begin":"1369","Year of Reign end":"1379"},
+				{"Kingdom":"Kingdom of Castile","Name":"John I","House":"House of Trast\u00e1mara","Family":"son of Henry II","Year of birth":"1358","Year of death":"1390","Year of Reign begin":"1379","Year of Reign end":"1390"},
+				{"Kingdom":"Kingdom of Castile","Name":"Henry III","House":"House of Trast\u00e1mara","Family":"son of John I","Year of birth":"1379","Year of death":"1406","Year of Reign begin":"1390","Year of Reign end":"1406"},
+				{"Kingdom":"Kingdom of Castile","Name":"John II","House":"House of Trast\u00e1mara","Family":"son of Henry III","Year of birth":"1405","Year of death":"1454","Year of Reign begin":"1406","Year of Reign end":"1454"},
+				{"Kingdom":"Kingdom of Castile","Name":"Henry IV","House":"House of Trast\u00e1mara","Family":"son of John II","Year of birth":"1425","Year of death":"1474","Year of Reign begin":"1454","Year of Reign end":"1474"},
+				{"Kingdom":"Kingdom of Castile","Name":"Isabella I","House":"House of Trast\u00e1mara","Family":"daughter of John II","Year of birth":"1451","Year of death":"1504","Year of Reign begin":"1474","Year of Reign end":"1504"},
+				// {"Kingdom":"Kingdom of Castile","Name":"Ferdinand V","House":"House of Trast\u00e1mara","Family":null,"Year of birth":"1452","Year of death":"1516","Year of Reign begin":"1475","Year of Reign end":"1504"},
+				{"Kingdom":"Kingdom of Castile","Name":"Joanna","House":"House of Trast\u00e1mara","Family":"daughter of Isabella I","Year of birth":"1479","Year of death":"1555","Year of Reign begin":"1504","Year of Reign end":"1555"},
+				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand V & II","House":"House of Trast\u00e1mara","Family":"Son of John II of Aragon and Juana Enr\u00edquez","Year of birth":"1452","Year of death":"1516","Year of Reign begin":"1475","Year of Reign end":"1516"},
+				{"Kingdom":"Kingdom of Spain","Name":"Isabella I","House":"House of Trast\u00e1mara","Family":"Daughter of John II of Castile and Isabella of Portugal","Year of birth":"1451","Year of death":"1504","Year of Reign begin":"1474","Year of Reign end":"1504"},
+				{"Kingdom":"Kingdom of Spain","Name":"Joanna","House":"House of Trast\u00e1mara","Family":"Daughter of Isabella I of Castile and Ferdinand II of Aragon","Year of birth":"1479","Year of death":"1555","Year of Reign begin":"1504","Year of Reign end":"1555"},
+				{"Kingdom":"Kingdom of Spain","Name":"Philip I","House":"House of Habsburg","Family":"Husband of Joanna of Castile","Year of birth":"1478","Year of death":"1506","Year of Reign begin":"1506","Year of Reign end":"1506"},
+				{"Kingdom":"Kingdom of Spain","Name":"Charles I","House":"House of Habsburg","Family":"Son of Joanna and Philip I of Castile","Year of birth":"1500","Year of death":"1558","Year of Reign begin":"1516","Year of Reign end":"1556"},
+				{"Kingdom":"Kingdom of Spain","Name":"Philip II","House":"House of Habsburg","Family":"Son of Charles I","Year of birth":"1527","Year of death":"1598","Year of Reign begin":"1556","Year of Reign end":"1598"},
+				{"Kingdom":"Kingdom of Spain","Name":"Philip III","House":"House of Habsburg","Family":"Son of Philip II","Year of birth":"1578","Year of death":"1621","Year of Reign begin":"1598","Year of Reign end":"1621"},
+				{"Kingdom":"Kingdom of Spain","Name":"Philip IV","House":"House of Habsburg","Family":"Son of Philip III","Year of birth":"1605","Year of death":"1665","Year of Reign begin":"1621","Year of Reign end":"1665"},
+				{"Kingdom":"Kingdom of Spain","Name":"Charles II","House":"House of Habsburg","Family":"Son of Philip IV","Year of birth":"1661","Year of death":"1700","Year of Reign begin":"1665","Year of Reign end":"1700"},
+				{"Kingdom":"Kingdom of Spain","Name":"Charles III, Archduke Charles of Austria","House":"House of Disputed claimant of the House of Habsburg","Family":"great-grandson of Philip III","Year of birth":"1685","Year of death":"1740","Year of Reign begin":"1703","Year of Reign end":"1715"},
+				{"Kingdom":"Kingdom of Spain","Name":"Philip V","House":"House of Bourbon","Family":"Great-grandson of Philip IV","Year of birth":"1683","Year of death":"1746","Year of Reign begin":"1700","Year of Reign end":"1724"},
+				{"Kingdom":"Kingdom of Spain","Name":"Louis I","House":"House of Bourbon","Family":"Son of Philip V","Year of birth":"1707","Year of death":"1724","Year of Reign begin":"1724","Year of Reign end":"1724"},
+				{"Kingdom":"Kingdom of Spain","Name":"Philip V","House":"House of Bourbon","Family":"Father of Louis I","Year of birth":"1683","Year of death":"1746","Year of Reign begin":"1724","Year of Reign end":"1746"},
+				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VI","House":"House of Bourbon","Family":"Son of Philip V","Year of birth":"1713","Year of death":"1759","Year of Reign begin":"1746","Year of Reign end":"1759"},
+				{"Kingdom":"Kingdom of Spain","Name":"Charles III","House":"House of Bourbon","Family":"Son of Philip V","Year of birth":"1716","Year of death":"1788","Year of Reign begin":"1759","Year of Reign end":"1788"},
+				{"Kingdom":"Kingdom of Spain","Name":"Charles IV","House":"House of Bourbon","Family":"Son of Charles III","Year of birth":"1748","Year of death":"1819","Year of Reign begin":"1788","Year of Reign end":"1808"},
+				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII","House":"House of Bourbon","Family":"Son of Charles IV","Year of birth":"1784","Year of death":"1833","Year of Reign begin":"1808","Year of Reign end":"1808"},
+				{"Kingdom":"Kingdom of Spain","Name":"Joseph I","House":"House of Bonaparte","Family":"The older brother of Emperor Napoleon","Year of birth":"1768","Year of death":"1844","Year of Reign begin":"1808","Year of Reign end":"1813"},
+				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII","House":"House of Bourbon","Family":"Son of Charles IV","Year of birth":"1784","Year of death":"1833","Year of Reign begin":"1813","Year of Reign end":"1833"},
+				{"Kingdom":"Kingdom of Spain","Name":"Isabella II","House":"House of Bourbon","Family":"Daughter of Ferdinand VII","Year of birth":"1830","Year of death":"1904","Year of Reign begin":"1833","Year of Reign end":"1868"},
+				{"Kingdom":"Kingdom of Spain","Name":"Amadeo I","House":"House of Savoy","Family":"Elected by Cortes Generales; Great-great-grandson of Charles III","Year of birth":"1845","Year of death":"1890","Year of Reign begin":"1870","Year of Reign end":"1873"},
+				{"Kingdom":"Kingdom of Spain","Name":"Alfonso XII","House":"House of Bourbon","Family":"Son of Isabella II","Year of birth":"1857","Year of death":"1885","Year of Reign begin":"1874","Year of Reign end":"1885"},
+				{"Kingdom":"Kingdom of Spain","Name":"Alfonso XIII","House":"House of Bourbon","Family":"Posthumous son of Alfonso XII","Year of birth":"1886","Year of death":"1941","Year of Reign begin":"1886","Year of Reign end":"1931"},
+				{"Kingdom":"Kingdom of Spain","Name":"Juan Carlos I","House":"House of Bourbon","Family":"Grandson of Alfonso XIII","Year of birth":"1938","Year of death":null,"Year of Reign begin":"1975","Year of Reign end":"2014"},
+				{"Kingdom":"Kingdom of Spain","Name":"Felipe VI","House":"House of Bourbon","Family":"Son of Juan Carlos I","Year of birth":"1968","Year of death":null,"Year of Reign begin":"2014","Year of Reign end":null}
 			];
 			// console.log(family_tree_data);
 
 			// 2. dimensions
+			var bar_thickness = 10;
+			var gap_between_bars = 5;
+
+			var svg_width  = 1200;
+			var svg_height = 1200;
+			
+			var margin_left  = 25;
+			var margin_right = 50;
+			var margin_top     = 35;
+			var margin_bottom  = 25;
+
+			var padding_top = 25;
+
+			var outer_width = svg_width - margin_left - margin_right;
 
 			// 3. scales
-			var family_tree_yscale = d3.scaleLinear()
+			var family_tree_xscale = d3.scaleLinear()
 				.domain([1007,2017]) // need to lengthen it
-				.range([0,1000])
-			;
-			var family_tree_yaxis = d3.axisLeft()
-				.scale(family_tree_yscale)
-			;
+				.range([0, outer_width])
 
+			;
+			var family_tree_xaxis_top = d3.axisTop()
+				.scale(family_tree_xscale)
+			;
+			var family_tree_xaxis_bottom = d3.axisBottom()
+				.scale(family_tree_xscale)
 
 			// 4. svg
 			var family_tree_svg = d3.select("#family_tree_chart").append("svg")
-				.attr("width", 1200)
-				.attr("height", 1000)
+				.attr("width", svg_width)
+				.attr("height", svg_height)
 				.attr("class", "cool_svg")
 			;
 
 			// 5. axes
-			var family_tree_yaxis_in_chart = family_tree_svg.append("g")
-				.attr("transform", "translate(50, 0)")
+			var family_tree_xaxis_top_in_chart = family_tree_svg.append("g")
+				.attr("transform", "translate("+margin_left+", "+margin_top+")")
 				.attr("class", "cool_axis")
-				.call(family_tree_yaxis)
+				.call(family_tree_xaxis_top)
+			;
+			var family_tree_xaxis_bottom_in_chart = family_tree_svg.append("g")
+				.attr("transform", "translate("+margin_left+", "+(svg_height-margin_bottom)+")")
+				.attr("class", "cool_axis")
+				.call(family_tree_xaxis_bottom)
 			;
 
 			// 6. life rect
 			var family_tree_life_rect = family_tree_svg.append("g")
 				.selectAll("rect").data(family_tree_data).enter().append("rect")
-				.attr("width", 10)
-				.attr("height", function( d, i ){ 
+				.attr("height", bar_thickness)
+				.attr("width", function( d, i ){ 
 					if(d["Year of death"]){
-						return 1000+family_tree_yscale(d["Year of death"]-d["Year of birth"]);
+						return outer_width+family_tree_xscale(d["Year of death"]-d["Year of birth"]);
 					}
 					else{
-						return 1000+family_tree_yscale(2017-d["Year of birth"]);
+						return outer_width+family_tree_xscale(2017-d["Year of birth"]);
 					}
 				} )
-				.attr("x", function( d, i ){ return 50 + i*15; } )
-				.attr("y", function( d, i ){ return family_tree_yscale(d["Year of birth"]); } )
-				.attr("class", function( d, i ){ return "cool_rect_"+i+" cool_rect_life"; } )
+				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars); } )
+				.attr("x", function( d, i ){ return margin_left + family_tree_xscale(d["Year of birth"]); } )
+				.attr("class", function( d, i ){
+					if( d["Kingdom"] == "Kingdom of Spain" ){
+						return "cool_rect_"+i+" cool_rect_life Spain";
+					}
+					else if( d["Kingdom"] == "Kingdom of Aragon" ){
+						return "cool_rect_"+i+" cool_rect_life Aragon";
+					}
+					else if( d["Kingdom"] == "Kingdom of Castile" ){
+						return "cool_rect_"+i+" cool_rect_life Castile";
+					}
+				} )
 			;
+
+
 			// 7. reign rect
 			var family_tree_reign_rect = family_tree_svg.append("g")
 				.selectAll("rect").data(family_tree_data).enter().append("rect")
-				.attr("width", 10)
-				.attr("height", function( d, i ){
-					var height = 1000+family_tree_yscale(d["Year of Reign end"]-d["Year of Reign begin"]);
+				.attr("height", bar_thickness)
+				.attr("width", function( d, i ){
+					var height = outer_width+family_tree_xscale(d["Year of Reign end"]-d["Year of Reign begin"]);
 					if(0 <= height){
 						return height;
 					}
@@ -184,24 +278,44 @@
 						return 0;
 					}
 				} )
-				.attr("x", function( d, i ){ return 50 + i*15; } )
-				.attr("y", function( d, i ){ return family_tree_yscale(d["Year of Reign begin"]); } )
-				.attr("class", function( d, i ){ return "cool_rect_"+i+" cool_rect_reign"; } )
+				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars); } )
+				.attr("x", function( d, i ){ return margin_left + family_tree_xscale(d["Year of Reign begin"]); } )
+				.attr("class", function( d, i ){ 
+					if( d["Kingdom"] == "Kingdom of Spain" ){
+						return "cool_rect_"+i+" cool_rect_reign Spain";
+					}
+					else if( d["Kingdom"] == "Kingdom of Aragon" ){
+						return "cool_rect_"+i+" cool_rect_reign Aragon";
+					}
+					else if( d["Kingdom"] == "Kingdom of Castile" ){
+						return "cool_rect_"+i+" cool_rect_reign Castile";
+					}
+				} )
 			;
+
+
+
+
+
+
+			// Define the div for the tooltip
+			var tooltip_div = d3.select("body").append("div")	
+			    .attr("class", "tooltip");
+			
 			// 8. invisible mouse action rect
 			var family_tree_invisible_rect = family_tree_svg.append("g")
 				.selectAll("rect").data(family_tree_data).enter().append("rect")
-				.attr("width", 10)
-				.attr("height", function( d, i ){ 
+				.attr("height", bar_thickness)
+				.attr("width", function( d, i ){ 
 					if(d["Year of death"]){
-						return 1000+family_tree_yscale(d["Year of death"]-d["Year of birth"]);
+						return outer_width+family_tree_xscale(d["Year of death"]-d["Year of birth"]);
 					}
 					else{
-						return 1000+family_tree_yscale(2017-d["Year of birth"]);
+						return outer_width+family_tree_xscale(2017-d["Year of birth"]);
 					}
 				} )
-				.attr("x", function( d, i ){ return 50 + i*15; } )
-				.attr("y", function( d, i ){ return family_tree_yscale(d["Year of birth"]); } )
+				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars); } )
+				.attr("x", function( d, i ){ return margin_left + family_tree_xscale(d["Year of birth"]); } )
 				.attr("class", function( d, i ){ return "cool_rect_"+i; } )
 				.attr("fill", "none")
 			;
@@ -211,6 +325,24 @@
 		        	var this_class = d3.select(this).attr("class");
 					d3.selectAll("."+this_class)
 						.classed("selected", true);
+
+					d = d3.select(this).data()[0];
+
+					tooltip_div
+						.classed("selected", true)
+						.html(
+							       "<span style='color:gray;font-weight:bold;'>Name:</span> " + d["Name"]
+							+ "<br/><span style='color:gray;font-weight:bold;'>Kingdom:</span> " + d["Kingdom"]
+							+ "<br/><span style='color:gray;font-weight:bold;'>House:</span> " + d["House"]
+							+ "<br/><span style='color:gray;font-weight:bold;'>Familial Relationship:</span> " + d["Family"]
+							+ "<br/><span style='color:gray;font-weight:bold;'>Year of Birth:</span> " + d["Year of birth"]
+							+ "<br/><span style='color:gray;font-weight:bold;'>Year of Death:</span> " + d["Year of death"]
+							+ "<br/><span style='color:gray;font-weight:bold;'>Start Year of Reign:</span> " + d["Year of Reign begin"]
+							+ "<br/><span style='color:gray;font-weight:bold;'>End Year of Reign:</span> " + d["Year of Reign end"]
+							
+						)
+		                .style("left", (d3.event.pageX) + "px")
+		                .style("top", (d3.event.pageY) + "px");
 				})
 		        // .on('mouseout', tip.hide)
 		        .on('mouseout', function() {
@@ -220,103 +352,30 @@
 					var this_class = d3.select(this).attr("class");
 					d3.selectAll("."+this_class)
 						.classed("selected", false);
+
+					tooltip_div
+						.classed("selected", false);
 				})
 			;
-
-
 
 
 			// 8. kings name
 			var family_tree_name_text = family_tree_svg.append("g")
 				.selectAll("text").data(family_tree_data).enter().append("text")
 				.attr("transform", function( d, i ){ 
-					var x = 50 + i*15; 
-					var y = 10 + family_tree_yscale(d["Year of death"]);
-					return "rotate(90,"+x+","+y+")";
+					// var y = 50 + i*15; 
+					// var x = 10 + family_tree_xscale(d["Year of death"]);
+					// return "rotate(90,"+y+","+x+")";
 				} )
 				// .text("Name of Kings")
 				// .text(function( d, i ){ return "Name of Kings"; })
 				.text(function( d, i ){ return d["Name"].toUpperCase(); })
 				// .attr("x", 10)
 				// .attr("y", 10)
-				.attr("x", function( d, i ){ return 50 + i*15; } )
-				.attr("y", function( d, i ){ return 10 + family_tree_yscale(d["Year of death"]); } )
+				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars) + bar_thickness-1; } )
+				.attr("x", function( d, i ){ return 10 + margin_left + family_tree_xscale(d["Year of death"]); } )
 				.attr("class", "cool_text")
 			;
-
-			// var 
-
-			// var tip = d3.tip()
-			// 	.attr('class', 'd3-tip')
-			// 	.offset([-10, 0])
-			// 	.html(function(d) {
-			// 		return "<strong>Frequency:</strong> <span style='color:red'>" + d.frequency + "</span>";
-			// 	})
-
-			// family_tree_svg.call(tip);
-
-		 //    // family_tree_svg.selectAll(".bar")
-   //    // 			.data(family_tree_data)
-   //  		// 	.enter().append("rect")
-   //    // 			.attr("class", "bar")
-   //    // 			.attr("x", function(d) { return x(d.letter); })
-   //   	// 		.attr("width", x.rangeBand())
-		 //    //     .attr("y", function(d) { return y(d.frequency); })
-		 //    //     .attr("height", function(d) { return height - y(d.frequency); })
-		 //    family_tree_life_rect
-
-			// group these and make them show up when selected
-
-			// // name
-			// var family_tree_king_name_text = family_tree_svg.append("g")
-			// 	.selectAll("text").data(family_tree_data).enter().append("text")
-			// 	.text(function( d, i ){ return d["Name"].toUpperCase(); })
-			// 	.attr("x", function( d, i ){ return 65 + i*15; } )
-			// 	.attr("y", function( d, i ){ return 30 + family_tree_yscale(d["Year of birth"]); } )
-			// 	.attr("class", "cool_text")
-
-			// // year of birth
-			// var family_tree_year_birth_text = family_tree_svg.append("g")
-			// 	.selectAll("text").data(family_tree_data).enter().append("text")
-			// 	.text(function( d, i ){ return "Year of Birth: " + d["Year of birth"]; })
-			// 	.attr("x", function( d, i ){ return 50 + i*15; } )
-			// 	.attr("y", function( d, i ){ return 10 + family_tree_yscale(d["Year of birth"]); } )
-			// 	.attr("class", "cool_text_dom")
-			// ;
-
-			// year of death
-
-			// year of Reign began
-
-			// Year of Reign end
-
-			// // 9. kingdom
-			// var family_tree_kingdom_text = family_tree_svg.append("g")
-			// 	.selectAll("text").data(family_tree_data).enter().append("text")
-			// 	.text(function( d, i ){ return d["Kingdom"]; })
-			// 	.attr("x", function( d, i ){ return 65 + i*15; } )
-			// 	.attr("y", function( d, i ){ return 30 + family_tree_yscale(d["Year of birth"]); } )
-			// 	.attr("class", "cool_text_dom")
-			// ;
-
-			// // 10. house
-			// var family_tree_house_text = family_tree_svg.append("g")
-			// 	.selectAll("text").data(family_tree_data).enter().append("text")
-			// 	.text(function( d, i ){ return d["House"]; })
-			// 	.attr("x", function( d, i ){ return 65 + i*15; } )
-			// 	.attr("y", function( d, i ){ return 40 + family_tree_yscale(d["Year of birth"]); } )
-			// 	.attr("class", "cool_text_dom")
-			// ;
-
-			// // 11. family(relation with the previous kings)
-			// var family_tree_family_text = family_tree_svg.append("g")
-			// 	.selectAll("text").data(family_tree_data).enter().append("text")
-			// 	.text(function( d, i ){ return d["Family"]; })
-			// 	.attr("x", function( d, i ){ return 65 + i*15; } )
-			// 	.attr("y", function( d, i ){ return 50 + family_tree_yscale(d["Year of birth"]); } )
-			// 	.attr("class", "cool_text_dom")
-			// ;
-
 		</script>
 	</body>
 </html>
