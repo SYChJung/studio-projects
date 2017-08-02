@@ -21,5 +21,16 @@ Organize the dataset into to 12 cateria : All sectors, Industrial, Domestic, Agr
 
 Ploted the water stress changes by each cateria.
 
-toggle
+toggle between BAU, optimistic, pessimistic projections
+- reorganize the into three dataframe: BAU, optimistic, pessimistic projections
+- cannot do it, using tufte slopegraph instead
+
+Writing html code
+- using D3.js
+- I decided not to use tufte slopegraph. There are too many countries and the graph might trun into a mass.
+- I am going to use horizontal bar chart.
+- Make the bars larger than 1, larger than 0.75, larger than 0.5, larger than 0.25, and smaller than 0.0 have different colors.
+
+
+
 
