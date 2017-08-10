@@ -5,3 +5,7 @@ Iowa Seasonally Adjusted Non-Farm Employment by Month and Industry
 
 I want to analyze and visualize this data and explore employment patterns by each non-farm category.
 
+# Three dataframes by criteria
+# Service_Providing_Employ_df, Government_Employ_df, Goods_Producing_Employ_df
+
+
