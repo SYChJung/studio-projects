@@ -16,7 +16,7 @@
 			}
 			.cool_circle{
 				/*r: 5;*/
-				opacity: .5;
+				opacity: .4;
 				fill:#37c;
 			}
 			.cool_axis_x {
@@ -31,11 +31,53 @@
 			/*.cool_axis_y path{
 				stroke:none;
 			}*/
-
+			div.tooltip {	
+				-webkit-transition: fill .2s; /* Safari */
+						transition: fill .2s;
+				position: absolute;			
+				/*width: 300px;					*/
+				/*height: 20px;					*/
+				padding: 5px;
+				border: 0px;		
+				border-radius: 3px;			
+				text-align: center;	
+				font: 15px sans-serif;		
+				/*background: lightsteelblue;*/
+				background: #001;
+				color: white;
+				opacity: 0;
+				pointer-events: none;
+			}
+			div.tooltip.selected{
+				-webkit-transition: fill .2s; /* Safari */
+						transition: fill .2s;
+				opacity: 0.9;
+			}
+			.selected{
+				opacity: .6;
+				fill:turquoise;/*#fd3;*//*blue;*/
+			}
+			.cool_text_description{
+				font-size:15px;
+				font-family:verdana;
+				alignment-baseline: auto;
+				/*vertical-align: text-bottom;*/
+			}			
 		</style>
 	</head>
 	<body>
 		<h1 class="cool_text_headline", align="center">Bird Breeding Behavior</h1>
+		<p class="cool_text_description">
+			This is a graph showing the number of birds according to their breeding behavior and species. The size of each circle represents the number of birds in each category.
+			<br>
+			<br>New York State’s breeding bird atlases record bird sightings in the state from 1980 to 1985 and from 2000 to 2005. Each record contains information about the location where the bird was sighted, the observer, the year of observation, etc. Among these, the information about the breeding behaviors and the kinds of birds interested me most.
+			<br>
+			<br><!--I organized the Breeding Bird Atlases dataset into a dataframe of breeding behaviors by each kind of bird. With this I used D3.js to make a graph showing the number of birds for each category. The numbers of birds is represented by the radii of the circles.
+			<br>
+			<br-->If you move your cursor over the circle, you can see more information: number of birds, kind of bird, bird breeding behavior.
+			<br>
+			<br> Data source: <a href="https://catalog.data.gov/dataset/breeding-bird-atlases">Breeding Bird Atlases</a>
+		</p>		
 		<div id="Bird_Breeding_Behavior"></div>
 		<script type="text/javascript">
 			// 1. Data
@@ -79,10 +121,10 @@
 			];
 
 			// 2. dimensions
-			var svg_width  = 1200;
+			var svg_width  = 1300;
 			var svg_height = 1200;
 			var margin_left   = 200;
-			var margin_right  = 80;
+			var margin_right  = 250;
 			var margin_top    = 300;
 			var margin_bottom = 25;
 			var padding_top    = 5;
@@ -143,18 +185,16 @@
 				.attr("class", "cool_axis_y")
 			;
 
-			// circle
+			// circle and tooltip
+			var tooltip_div = d3.select("body").append("div")	
+				.attr("class", "tooltip");
 
 			var keys = Object.keys(Bird_Breeding_Behavior_data[0]).filter(
 				function(element){ return element != "Common Name";}
 			);
-			for(var i = 0; i < keys.length; i++){
-				// console.log(keys[i]);
-				// console.log(xScale(keys[i]));
-
-
-				// var column_name = "Adults(s) entering or leaving nest site indicating occupied nest";
-				var column_name = keys[i];
+			for(var j = 0; j < keys.length; j++)
+			{
+				var column_name = keys[j];
 
 				var circles_g = outer_box
 					.append("g")
@@ -162,14 +202,45 @@
 				var circles = circles_g
 					.selectAll("circle").data(Bird_Breeding_Behavior_data).enter().append("circle")
 					.attr("class", "cool_circle")
+					.attr("dummy_1", column_name)
+					.attr("dummy_2", function(d, i){ return d[column_name]})
 					.style("r", function(d, i){ return Math.sqrt(d[column_name]); })
 					.attr("cx", xScale(column_name) + xScale.bandwidth()/2)
 					.attr("cy", function(d, i){ return yScale(d["Common Name"]) + yScale.bandwidth()/2; })
 					// .attr("fill", function(d,i) { return colors_google(i); } )
-				;
+					.on("mouseover", function(d, i){
+						var d3_select_this = d3.select(this);
+
+						d3_select_this
+							.classed("selected", true)
+						
+						d = d3_select_this.data()[0];
+
+						var dummy = d3_select_this.attr( "dummy_1" )
+						var num   = d3_select_this.attr( "dummy_2" )
+
+						tooltip_div
+							.classed("selected", true)
+							.html(
+									   "<span style='color:gray;font-weight:bold;'>Number of birds:</span> " + num
+								+ "<br/>"
+								+ "<br/><span style='color:gray;font-weight:bold;'>Kind of Bird:</span> " + d["Common Name"]
+								+ "<br/>"
+								+ "<br/><span style='color:gray;font-weight:bold;'>Bird Breeding Behavior:</span> " + dummy
+							)
+							.style("left", (d3.event.pageX) + "px")
+							.style("top", (d3.event.pageY) + "px");
+					})
+					.on("mouseout", function(d, i){
+						d3.select(this)
+							.classed("selected", false)
+							;
+						tooltip_div
+							.classed("selected", false)
+					;
+					})
 			}
-			
-			// I want to apply ('http://nvd3.org/examples/scatter.html')								
-		</script>
+											
+		</script>		
 	</body>
 </html>

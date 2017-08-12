@@ -11,8 +11,9 @@ Breeding_df.to_csv("Breeding_df.csv")
 
 - made a visualizaton of number of each kind of bird with breeding behavior “Adult carrying fecal sac”
 
+made the basic structure of the graph
+
 D3.js codes
-- http://nvd3.org/examples/scatter.html
 - https://bl.ocks.org/mbostock/4063269
 
 
