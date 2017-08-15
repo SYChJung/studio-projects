@@ -8,4 +8,5 @@ I want to analyze and visualize this data and explore employment patterns by eac
 # Three dataframes by criteria
 # Service_Providing_Employ_df, Government_Employ_df, Goods_Producing_Employ_df
 
-
+D3 codes for Line Chart
+- https://bl.ocks.org/mbostock/3883245
