@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>
-			Visualizing Seasonal Non-Farm Employment Changes of Iowa
+			Visualizing Non-Farm Employment Changes of Iowa
 		</title>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		<style type="text/css">
@@ -15,19 +15,48 @@
 				color:#558;
 			}
 			.cool_text_description{
-				font-size:15px;
+				font-size:20px;
 				font-family:verdana;
 				alignment-baseline: auto;
-				/*vertical-align: text-bottom;*/
-			}						
+			}
+			.cool_text{
+				font-size:11px;
+				font-family:verdana;
+				alignment-baseline: auto;
+			}
+
+			div.tooltip {	
+				-webkit-transition: fill .2s; /* Safari */
+						transition: fill .2s;
+				position: absolute;			
+				/*width: 300px;					*/
+				/*height: 20px;					*/
+				padding: 5px;
+				border: 0px;		
+				border-radius: 3px;			
+				text-align: center;	
+				font: 15px sans-serif;		
+				/*background: lightsteelblue;*/
+				background: #001;
+				color: white;
+				opacity: 0;
+				pointer-events: none;
+			}
+			div.tooltip.selected{
+				-webkit-transition: fill .2s; /* Safari */
+						transition: fill .2s;
+				opacity: 0.9;
+			}								
 		</style>
 	</head>
 	<body>
-		<h1 class="cool_text_headline", align="center">Seasonal Non-Farm Employment Changes of Iowa</h1>
+		<h1 class="cool_text_headline" align="center">Non-Farm Employment Changes of Iowa</h1>
 		<p class="cool_text_description">
-			words
+			These graphs show three categories of non-farm employment in Iowa: "goods-producing," "service-providing," and "government."
 			<br>
-			<br>words
+			<br>These graphs analyze and visualize the dataset "Iowa Seasonally Adjusted Non-Farm Employment by Month and Industry," which was made by the state of Iowa to show employment numbers at the end of each month, according to categories in the non-farm industry.
+			<br>
+			<br>If you move your cursor over the line chart, you can see the name of the subsector it represents.
 			<br>
 			<br> Data source: <a href="https://catalog.data.gov/dataset/iowa-seasonally-adjusted-non-farm-employment-by-month-and-industry">Iowa Seasonally Adjusted Non-Farm Employment by Month and Industry</a>
 		</p>
@@ -3004,8 +3033,8 @@
 			var svg_width  = 1300;
 			var svg_height = 1200;
 			var margin_left   = 200;
-			var margin_right  = 250;
-			var margin_top    = 300;
+			var margin_right  = 450;
+			var margin_top    = 10;
 			var margin_bottom = 25;
 			var padding_top    = 5;
 			var padding_bottom = 5;
@@ -3024,6 +3053,12 @@
 				.attr("transform", "translate(" + margin_left + "," + margin_top + ")")
 			;
 
+			// D3 codes for Line Chart and tooltip
+
+			// tooltip
+			var tooltip_div = d3.select("body").append("div")	
+				.attr("class", "tooltip");
+
 			// D3 codes for Line Chart
 			var parseTime = d3.timeParse("%d-%b-%y")
 			;
@@ -3038,13 +3073,6 @@
 			    .x(function(d) { return x(d["Month Ending"]); })
 			    .y(function(d) { return y(d["Employment (in thousands)"]); })
 			;
-
-			// d3.tsv("data.tsv", function(d) {
-			//   d["Month Ending"] = parseTime(d.date);
-			//   d["Employment (in thousands)"] = +d["Employment (in thousands)"];
-			//   return d;
-			// }, function(error, data) {
-			//   if (error) throw error;
 			  var data = Service_Providing_Employ.sort(function(a, b){ return a["Month Ending"] - b["Month Ending"]; });
 
 			  x.domain(d3.extent(data, function(d) { return d["Month Ending"]; }));
@@ -3063,37 +3091,92 @@
 			      .attr("transform", "rotate(-90)")
 			      .attr("y", 6)
 			      .attr("dy", "0.71em")
+			      .attr("font-size", "20px")
 			      .attr("text-anchor", "end")
 			      .text("Employment (in thousands)");
-
-			  // outer_box.append("path")
-			  //     .datum(data)
-			  //     .attr("fill", "none")
-			  //     .attr("stroke", "steelblue")
-			  //     .attr("stroke-linejoin", "round")
-			  //     .attr("stroke-linecap", "round")
-			  //     .attr("stroke-width", 1.5)
-			  //     .attr("d", line);
 
 			  var nested_data = d3.nest()
 			  	.key(function(d){return d["Supersector or Industry"];})
 			  	.entries(data)
 			  ;
+
+			 // color
+			function colors_google(n) {
+				var colors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+				return colors[n % colors.length];
+			}
+
 			  var paths = outer_box.append("g")
 			  	.selectAll("path").data(nested_data).enter().append("path")
 			  	.attr("d", function(d){
 			  		return line(d.values)
 			  	})
 			  	// .style("stroke", function(d){return line(d.key)})
-			  	.style("stroke", "red")
+			  	// .style("stroke", "red")
+			  	.attr("stroke", function(d,i) { return colors_google(i); } )
 			  	.style("fill", "none")
-			  ;
+			  	.style("stroke-width", '2px')
+				.on("mouseover", function(d, i){
+					d3.select(this)
+					.style("stroke-width", '5px')
+						.classed("selected", true)
+					// var d = d3.select(this).data()[0];
+					var d_SPE = Service_Providing_Employ[i];
+
+					tooltip_div
+						.classed("selected", true)
+						.html(
+							d_SPE["Supersector or Industry"]
+						)
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY) + "px");
+				})
+				.on("mouseout", function(d, i){
+					d3.select(this)
+						.style("stroke-width", '2px')
+						.classed("selected", false)
+					tooltip_div
+						.classed("selected", false);							
+					;
+				})
+
+			// console.log( nested_data.map(function(d, i){
+			// 	var values_array = d.values
+			// 	return values_array[values_array.length-1]["Month Ending"]; 
+			// 	}) );
+			// console.log( nested_data.map(function(d, i){
+			// 	var values_array = d.values
+			// 	return values_array[values_array.length-1]["Employment (in thousands)"]; 
+			// 	}) );
+
+
+
+			// Supersector or Industry name
+			var SI_name_text = svg.append("g")
+				.selectAll("text").data(nested_data).enter().append("text")
+				.text(function( d, i ){ return d["key"].toUpperCase(); })
+
+				.attr("y", function( d, i ){
+					var values_array = d["values"];
+					return y(values_array[values_array.length-43]["Employment (in thousands)"])+margin_top+padding_top;
+				} )
+				.attr("x", function( d, i ){
+					var values_array = d["values"];
+					return x(values_array[values_array.length-1]["Month Ending"])+margin_left;
+				} )
+				.attr("class", "cool_text")
+			;
 
 			// });
 
 		</script>
 		<p class="cool_text_description">
-			&#9650; words
+			&#9650; This is a graph showing how service-providing employment in Iowa changed over time. Each line represents the subsector: "education and health services," "financial activities," "information," "leisure and hospitality," "other services," "professional and business services," "retail trade," "transportation," "utilities," and "wholesale trade."
+			<br>
+			<br>As you can see, before the 2000s, "retail trade" had the greatest employment number. But after 2002, employment of "education and health services" exceeded that of "retail trade."
+			<br>
+			<br>"Information" has the smallest employment number. It increased until the year 2000, but after that it started to decrease to near 20,000.
+			<br>
 		</p>
 
 		<!-- Government_Employ -->
@@ -4094,8 +4177,8 @@
 			var svg_width  = 1300;
 			var svg_height = 1200;
 			var margin_left   = 200;
-			var margin_right  = 250;
-			var margin_top    = 300;
+			var margin_right  = 450;
+			var margin_top    = 30;
 			var margin_bottom = 25;
 			var padding_top    = 5;
 			var padding_bottom = 5;
@@ -4108,14 +4191,123 @@
 				.attr("height", svg_height)
 				.style("background-color", "#fff")
 			;
+
 			var outer_box = svg
 				.append("g")
 				.attr("transform", "translate(" + margin_left + "," + margin_top + ")")
 			;
 
+			// D3 codes for Line Chart and tooltip
+
+			// tooltip
+			var tooltip_div = d3.select("body").append("div")	
+				.attr("class", "tooltip");
+
+			// D3 codes for Line Chart
+			var parseTime = d3.timeParse("%d-%b-%y")
+			;
+			var x = d3.scaleTime()
+    			.rangeRound([0, outer_width])
+    		;
+			var y = d3.scaleLinear()
+			    .rangeRound([outer_height, 0])
+			;
+
+			var line = d3.line()
+			    .x(function(d) { return x(d["Month Ending"]); })
+			    .y(function(d) { return y(d["Employment (in thousands)"]); })
+			;
+			  var data = Government_Employ.sort(function(a, b){ return a["Month Ending"] - b["Month Ending"]; });
+
+			  x.domain(d3.extent(data, function(d) { return d["Month Ending"]; }));
+			  y.domain(d3.extent(data, function(d) { return d["Employment (in thousands)"]; }));
+
+			  outer_box.append("g")
+			      .attr("transform", "translate(0," + outer_height + ")")
+			      .call(d3.axisBottom(x))
+			    .select(".domain")
+			      .remove();
+
+			  outer_box.append("g")
+			      .call(d3.axisLeft(y))
+			    .append("text")
+			      .attr("fill", "#000")
+			      .attr("transform", "rotate(-90)")
+			      .attr("y", 6)
+			      .attr("font-size", "20px")
+			      .attr("dy", "0.71em")
+			      .attr("text-anchor", "end")
+			      .text("Employment (in thousands)");
+
+			  var nested_data = d3.nest()
+			  	.key(function(d){return d["Supersector or Industry"];})
+			  	.entries(data)
+			  ;
+
+			 // color
+			function colors_google(n) {
+				var colors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+				return colors[n % colors.length];
+			}
+
+			  var paths = outer_box.append("g")
+			  	.selectAll("path").data(nested_data).enter().append("path")
+			  	.attr("d", function(d){
+			  		return line(d.values)
+			  	})
+			  	// .style("stroke", function(d){return line(d.key)})
+			  	// .style("stroke", "red")
+			  	.attr("stroke", function(d,i) { return colors_google(i); } )
+			  	.style("fill", "none")
+			  	.style("stroke-width", '2px')
+				.on("mouseover", function(d, i){
+					d3.select(this)
+					.style("stroke-width", '5px')
+						.classed("selected", true)
+					// var d = d3.select(this).data()[0];
+					var d_GE = Government_Employ[i];
+
+					tooltip_div
+						.classed("selected", true)
+						.html(
+							d_GE["Supersector or Industry"]
+						)
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY) + "px");
+				})
+				.on("mouseout", function(d, i){
+					d3.select(this)
+						.style("stroke-width", '2px')
+						.classed("selected", false)
+					tooltip_div
+						.classed("selected", false);							
+					;
+				})
+
+			// Supersector or Industry name
+			var SI_name_text = svg.append("g")
+				.selectAll("text").data(nested_data).enter().append("text")
+				.text(function( d, i ){ return d["key"].toUpperCase(); })
+
+				.attr("y", function( d, i ){
+					var values_array = d["values"];
+					return y(values_array[values_array.length-1]["Employment (in thousands)"])+margin_top+padding_top-10;
+				} )
+				.attr("x", function( d, i ){
+					var values_array = d["values"];
+					return x(values_array[values_array.length-1]["Month Ending"])+margin_left;
+				} )
+				.attr("class", "cool_text")
+			;
+
 		</script>
 		<p class="cool_text_description">
-			&#9650; words
+			&#9650; This is a graph showing how government employment in Iowa changed over time. Each line represents the subsector: "federal government," "state government," and "federal government," "state government," and "local government."
+			<br>
+			<br>"Local government" has the greatest employment number, which steadily increased from 1990 to 2017.
+			<br>
+			<br>The employment number for "federal government" is the smallest of the three. It temporarily increased in 1990, 2000, and 2010, but mostly it stayed near 20,000. <!--Note to self: Find out why it increased in those years-->
+			<br>
 		</p>		
 
 		<!-- Goods_Producing_Employ -->
@@ -5116,8 +5308,8 @@
 			var svg_width  = 1300;
 			var svg_height = 1200;
 			var margin_left   = 200;
-			var margin_right  = 250;
-			var margin_top    = 300;
+			var margin_right  = 450;
+			var margin_top    = 30;
 			var margin_bottom = 25;
 			var padding_top    = 5;
 			var padding_bottom = 5;
@@ -5130,13 +5322,123 @@
 				.attr("height", svg_height)
 				.style("background-color", "#fff")
 			;
+
 			var outer_box = svg
 				.append("g")
 				.attr("transform", "translate(" + margin_left + "," + margin_top + ")")
-			;			
+			;
+
+			// D3 codes for Line Chart and tooltip
+
+			// tooltip
+			var tooltip_div = d3.select("body").append("div")	
+				.attr("class", "tooltip");
+
+			// D3 codes for Line Chart
+			var parseTime = d3.timeParse("%d-%b-%y")
+			;
+			var x = d3.scaleTime()
+    			.rangeRound([0, outer_width])
+    		;
+			var y = d3.scaleLinear()
+			    .rangeRound([outer_height, 0])
+			;
+
+			var line = d3.line()
+			    .x(function(d) { return x(d["Month Ending"]); })
+			    .y(function(d) { return y(d["Employment (in thousands)"]); })
+			;
+			  var data = Goods_Producing_Employ.sort(function(a, b){ return a["Month Ending"] - b["Month Ending"]; });
+
+			  x.domain(d3.extent(data, function(d) { return d["Month Ending"]; }));
+			  y.domain(d3.extent(data, function(d) { return d["Employment (in thousands)"]; }));
+
+			  outer_box.append("g")
+			      .attr("transform", "translate(0," + outer_height + ")")
+			      .call(d3.axisBottom(x))
+			    .select(".domain")
+			      .remove();
+
+			  outer_box.append("g")
+			      .call(d3.axisLeft(y))
+			    .append("text")
+			      .attr("fill", "#000")
+			      .attr("transform", "rotate(-90)")
+			      .attr("y", 6)
+			      .attr("dy", "0.71em")
+			      .attr("font-size", "20px")
+			      .attr("text-anchor", "end")
+			      .text("Employment (in thousands)");
+
+			  var nested_data = d3.nest()
+			  	.key(function(d){return d["Supersector or Industry"];})
+			  	.entries(data)
+			  ;
+
+			 // color
+			function colors_google(n) {
+				var colors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+				return colors[n % colors.length];
+			}
+
+			  var paths = outer_box.append("g")
+			  	.selectAll("path").data(nested_data).enter().append("path")
+			  	.attr("d", function(d){
+			  		return line(d.values)
+			  	})
+			  	// .style("stroke", function(d){return line(d.key)})
+			  	// .style("stroke", "red")
+			  	.attr("stroke", function(d,i) { return colors_google(i); } )
+			  	.style("fill", "none")
+			  	.style("stroke-width", '2px')
+				.on("mouseover", function(d, i){
+					d3.select(this)
+					.style("stroke-width", '5px')
+						.classed("selected", true)
+					// var d = d3.select(this).data()[0];
+					var d_GPE = Goods_Producing_Employ[i];
+
+					tooltip_div
+						.classed("selected", true)
+						.html(
+							d_GPE["Supersector or Industry"]
+						)
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY) + "px");
+				})
+				.on("mouseout", function(d, i){
+					d3.select(this)
+						.style("stroke-width", '2px')
+						.classed("selected", false)
+					tooltip_div
+						.classed("selected", false);							
+					;
+				})
+
+			// Supersector or Industry name
+			var SI_name_text = svg.append("g")
+				.selectAll("text").data(nested_data).enter().append("text")
+				.text(function( d, i ){ return d["key"].toUpperCase(); })
+
+				.attr("y", function( d, i ){
+					var values_array = d["values"];
+					return y(values_array[values_array.length-30]["Employment (in thousands)"])+margin_top+padding_top;
+				} )
+				.attr("x", function( d, i ){
+					var values_array = d["values"];
+					return x(values_array[values_array.length-1]["Month Ending"])+margin_left;
+				} )
+				.attr("class", "cool_text")
+			;
+
 		</script>
 		<p class="cool_text_description">
-			&#9650; words
+			&#9650; This is a graph showing how employment in the goods producing industry in Iowa changed over time. Each line represents the subsector: "construction," "manufacturing," "mining and logging."
+			<br>
+			<br>"Manufacturing" has the greatest employment number. However, it increases and decreases every 6 to 8 years.
+			<br>
+			<br>There is almost no employment in "mining and logging."
+			<br>
 		</p>
 
 	</body>
