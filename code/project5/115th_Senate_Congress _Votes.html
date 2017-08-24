@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			Visualizing Senate Voting History
+		</title>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<style type="text/css">
+			g{
+				pointer-events: all;
+			}
+			.cool_text_headline{
+				font-size:35px;
+				font-family:verdana;
+				color:#558;
+			}
+			.cool_text_description{
+				font-size:20px;
+				font-family:verdana;
+				alignment-baseline: auto;
+			}	
+			.cool_axis_x {
+				font-size: 15px;			
+			}
+			.cool_axis_y {
+				font-size: 15px;
+			}
+			.cool_circle{
+				opacity: .4;
+				fill:#37c;
+			}			
+		</style>
+	</head>
+	<body>
+		<h1 class="cool_text_headline" align="center">115th Senators&rsquo; Voting Tendency</h1>
+		<p class="cool_text_description">
+			Voting results, "yes" or "no" for each issue.
+			<br>
+			<br>
+		</p>
+		<div id="Senate115_Voting"></div>
+		<script type="text/javascript">
+			// 1. Data
+		 d3.json("votescrape.json", function(voting_data){
+		 	console.log("load the data")
+			// 2. dimensions
+			var svg_width  = 1100;
+			var svg_height = 1200;
+			var margin_left   = 200;
+			var margin_right  = 450;
+			var margin_top    = 30;
+			var margin_bottom = 25;
+			var padding_top    = 5;
+			var padding_bottom = 5;
+			var outer_width  = svg_width - margin_left - margin_right;
+			var outer_height = svg_height - margin_top - margin_bottom;
+
+			var svg = d3.select("#Senate115_Voting")
+				.append("svg")
+				.attr("width", svg_width)
+				.attr("height", svg_height)
+				.style("background-color", "#fff")
+			;
+
+			var outer_box = svg
+				.append("g")
+				.attr("transform", "translate(" + margin_left + "," + margin_top + ")")
+			;
+
+			var xScale = d3.scaleBand()
+				.domain(
+					Object.keys(voting_data[0]).filter(
+						function(element){ return element != "Question";}
+					)
+				)
+				.rangeRound([0, outer_width])
+				.padding(0.1)
+			;
+			var yScale = d3.scaleBand()
+				.domain(
+					voting_data.map(
+						function(dictionary){ return dictionary["Question"];}
+					)
+				)
+				.rangeRound([0, outer_height])
+				.padding(0.1)
+			;
+
+			// axes
+			var xAxis_top = d3.axisTop()
+				.scale(xScale)
+			;
+			var yAxis_left = d3.axisLeft()
+				.scale(yScale)
+			;			
+
+			var Senate115_Voting_top = outer_box.append("g")
+				// .attr("transform", "translate(0,"+margin_top+")")
+				.call(xAxis_top)
+				.attr("class", "cool_axis_x")			
+			;
+			Senate115_Voting_top.selectAll("text")
+				.attr("transform", "rotate(330)")
+				.style("text-anchor", "start")
+			;
+			var Senate115_Voting_left = outer_box.append("g")
+				.attr("transform", "translate(0,0)")
+				.call(yAxis_left)
+				.attr("class", "cool_axis_y")
+			;
+
+			// circle and tooltip
+			// var tooltip_div = d3.select("body").append("div")	
+			// 	.attr("class", "tooltip");
+
+			var keys = Object.keys(voting_data[0]).filter(
+				function(element){ return element != "Question";}
+			);
+			for(var j = 0; j < keys.length; j++)
+			{
+				var column_name = keys[j];
+
+				var circles_g = outer_box
+					.append("g")
+				;
+				var circles = circles_g
+					.selectAll("circle").data(voting_data).enter().append("circle")
+					.attr("class", "cool_circle")
+					.attr("dummy_1", column_name)
+					.attr("dummy_2", function(d, i){ return d[column_name]})
+					.style("r", 6)
+					// .style("r", function(d, i){ return Math.sqrt(d[column_name]); })
+					.attr("cx", xScale(column_name) + xScale.bandwidth()/2)
+					.attr("cy", function(d, i){ return yScale(d["Question"]) + yScale.bandwidth()/2; })
+					// .attr("fill", function(d,i) { return colors_google(i); } )
+					.on("mouseover", function(d, i){
+						var d3_select_this = d3.select(this);
+
+						d3_select_this
+							.classed("selected", true)
+						
+						d = d3_select_this.data()[0];
+
+						var dummy = d3_select_this.attr( "dummy_1" )
+						var num   = d3_select_this.attr( "dummy_2" )
+
+					// 	tooltip_div
+					// 		.classed("selected", true)
+					// 		.html(
+					// 				   "<span style='color:gray;font-weight:bold;'>Number of birds:</span> " + num
+					// 			+ "<br/>"
+					// 			+ "<br/><span style='color:gray;font-weight:bold;'>Kind of Bird:</span> " + d["Common Name"]
+					// 			+ "<br/>"
+					// 			+ "<br/><span style='color:gray;font-weight:bold;'>Bird Breeding Behavior:</span> " + dummy
+					// 		)
+					// 		.style("left", (d3.event.pageX) + "px")
+					// 		.style("top", (d3.event.pageY) + "px");
+					})
+					.on("mouseout", function(d, i){
+						d3.select(this)
+							.classed("selected", false)
+							;
+						// tooltip_div
+						// 	.classed("selected", false)
+					// ;
+					})
+			}
+
+		 })
+		// <script type="text/javascript">
+
+			// var Senators115_Voting = 
+
+		</script>
+	</body>
+</html>

@@ -11,6 +11,7 @@ scaping and dataframe
 2. individual vote pages -> xml pages
 3. individual issue pages
 4. save to files, just in case
-
+5. get just the info I want from vote_xml
 6. get just the info I want from issue_html
 
+- Voting results, "yes" or "no" for each issue.
