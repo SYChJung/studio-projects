@@ -1,5 +1,0 @@
-Please use the template I provided to make this look a little nicer and more presentable.
-
-You need a narrative structure to this - these are complicated graphics that don't have a strong story. You'll need to highlight exactly what makes them interesting
-
-I would also make the graphics much smaller so they can fit on the screen all at once. This probably means getting rid of some details - cleaning up your axes, tick marks, etc.
