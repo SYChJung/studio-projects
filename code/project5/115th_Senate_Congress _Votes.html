@@ -26,9 +26,18 @@
 				font-size: 15px;
 			}
 			.cool_circle{
-				opacity: .4;
-				fill:#37c;
-			}			
+				opacity: .5;
+				/*fill:#37c;*/
+			}
+			div.tooltip.selected{
+				-webkit-transition: fill .2s; /* Safari */
+						transition: fill .2s;
+				opacity: 0.9;
+			}
+			.selected{
+				opacity: .6;
+				fill:turquoise;/*#fd3;*//*blue;*/
+			}				
 		</style>
 	</head>
 	<body>
@@ -41,14 +50,14 @@
 		<div id="Senate115_Voting"></div>
 		<script type="text/javascript">
 			// 1. Data
-		 d3.json("votescrape.json", function(voting_data){
+		 d3.json("votescrape2.json", function(voting_data){
 		 	console.log("load the data")
 			// 2. dimensions
-			var svg_width  = 1100;
-			var svg_height = 1200;
+			var svg_width  = 4200;
+			var svg_height = 1800;
 			var margin_left   = 200;
 			var margin_right  = 450;
-			var margin_top    = 30;
+			var margin_top    = 240;
 			var margin_bottom = 25;
 			var padding_top    = 5;
 			var padding_bottom = 5;
@@ -67,21 +76,31 @@
 				.attr("transform", "translate(" + margin_left + "," + margin_top + ")")
 			;
 
-			var xScale = d3.scaleBand()
+
+
+			//sorting the 'Vote number's.
+			voting_data = voting_data.sort(function(a, b) {
+				return a['Vote number'] - b['Vote number']
+			})
+
+			// There are votes with same 'Questions'. I used 'Vote number' instead to verify them
+			var xScale = d3.scalePoint()
 				.domain(
-					Object.keys(voting_data[0]).filter(
-						function(element){ return element != "Question";}
+					voting_data.map(
+						function(dict){ return dict["Vote number"];}
 					)
 				)
 				.rangeRound([0, outer_width])
 				.padding(0.1)
 			;
-			var yScale = d3.scaleBand()
+
+			var yScale = d3.scalePoint()
 				.domain(
-					voting_data.map(
-						function(dictionary){ return dictionary["Question"];}
-					)
+					voting_data[0]["Votes"].map(function(dict, index){
+						return dict["Senator first name"] + " " + dict["Senator last name"];
+					}).concat("Luther Strange")
 				)
+				// Meet Luther Strange, the man replacing Jeff Sessions in the Senate
 				.rangeRound([0, outer_height])
 				.padding(0.1)
 			;
@@ -94,11 +113,32 @@
 				.scale(yScale)
 			;			
 
+			// tooltip
+			var tooltip_div = d3.select("body").append("div")	
+				.attr("class", "tooltip");
+
 			var Senate115_Voting_top = outer_box.append("g")
 				// .attr("transform", "translate(0,"+margin_top+")")
 				.call(xAxis_top)
 				.attr("class", "cool_axis_x")			
 			;
+			outer_box.selectAll(".cool_axis_x .tick")
+				.on('mouseover', function(number) {
+					var vote = voting_data.find(function(d) {
+						return d['Vote number'] == number
+					})
+					// console.log(vote)
+					tooltip_div
+						.classed("selected", true)
+						.html(
+									   "<span style='color:gray;font-weight:bold;'>Vote Question:</span> " + " "
+								+ "<br/>"
+						)
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY) + "px");
+				})
+
+
 			Senate115_Voting_top.selectAll("text")
 				.attr("transform", "rotate(330)")
 				.style("text-anchor", "start")
@@ -109,68 +149,102 @@
 				.attr("class", "cool_axis_y")
 			;
 
-			// circle and tooltip
-			// var tooltip_div = d3.select("body").append("div")	
-			// 	.attr("class", "tooltip");
 
-			var keys = Object.keys(voting_data[0]).filter(
-				function(element){ return element != "Question";}
-			);
-			for(var j = 0; j < keys.length; j++)
-			{
-				var column_name = keys[j];
+			// vote cast 
+			for(var j = 0; j < voting_data.length; j++){
+				var voting_data_j_Votes = voting_data[j]["Votes"];
+				var voting_data_j_sponsor_party = voting_data[j]["sponsor_party"];
+				// console.log(voting_data_j_sponsor_party || voting_data[j]["label_text"]); // Nomination
 
 				var circles_g = outer_box
 					.append("g")
 				;
 				var circles = circles_g
-					.selectAll("circle").data(voting_data).enter().append("circle")
+					.selectAll("circle").data(voting_data_j_Votes).enter().append("circle")
 					.attr("class", "cool_circle")
-					.attr("dummy_1", column_name)
-					.attr("dummy_2", function(d, i){ return d[column_name]})
+					// .attr("dummy_1", column_name)
+					// .attr("dummy_2", function(d, i){ return d[column_name]})
 					.style("r", 6)
-					// .style("r", function(d, i){ return Math.sqrt(d[column_name]); })
-					.attr("cx", xScale(column_name) + xScale.bandwidth()/2)
-					.attr("cy", function(d, i){ return yScale(d["Question"]) + yScale.bandwidth()/2; })
-					// .attr("fill", function(d,i) { return colors_google(i); } )
-					.on("mouseover", function(d, i){
-						var d3_select_this = d3.select(this);
-
-						d3_select_this
-							.classed("selected", true)
-						
-						d = d3_select_this.data()[0];
-
-						var dummy = d3_select_this.attr( "dummy_1" )
-						var num   = d3_select_this.attr( "dummy_2" )
-
-					// 	tooltip_div
-					// 		.classed("selected", true)
-					// 		.html(
-					// 				   "<span style='color:gray;font-weight:bold;'>Number of birds:</span> " + num
-					// 			+ "<br/>"
-					// 			+ "<br/><span style='color:gray;font-weight:bold;'>Kind of Bird:</span> " + d["Common Name"]
-					// 			+ "<br/>"
-					// 			+ "<br/><span style='color:gray;font-weight:bold;'>Bird Breeding Behavior:</span> " + dummy
-					// 		)
-					// 		.style("left", (d3.event.pageX) + "px")
-					// 		.style("top", (d3.event.pageY) + "px");
+					// // .style("r", function(d, i){ return Math.sqrt(d[column_name]); })
+					// .attr("cy", yScale(column_name) + yScale.bandwidth()/2)
+					// .attr("cx", function(d, i){ return xScale(d["Question"]) + xScale.bandwidth()/2; })
+					// // .attr("fill", function(d,i) { return colors_google(i); } )
+					.attr("cx", function(d, i){ 
+						return xScale(voting_data[j]['Vote number']);
 					})
-					.on("mouseout", function(d, i){
-						d3.select(this)
-							.classed("selected", false)
-							;
-						// tooltip_div
-						// 	.classed("selected", false)
-					// ;
+
+					.attr("cy", function(d, i){ 
+						var y = yScale(d["Senator first name"] + " " + d["Senator last name"])
+						return yScale(d["Senator first name"] + " " + d["Senator last name"]); 
 					})
+					// .attr("fill", "#37c")
+					.attr("fill", function(d,i){
+
+						// if(d["Vote cast"] == 'Yea'){
+						// 	return "green";
+						// }
+						// else if(d["Vote cast"] == 'Nay'){
+						// 	return "yellow";
+						// }
+
+						if      (d["Party"]==voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="R"&&d["Vote cast"] == 'Yea'){
+							return "orange";
+						}
+						else if (d["Party"]==voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="R"&&d["Vote cast"] == 'Nay'){
+							return "turquoise";
+						}
+						else if (d["Party"]!=voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="R"&&d["Vote cast"] == 'Yea'){
+							return "yellow";
+						}			
+						else if (d["Party"]!=voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="R"&&d["Vote cast"] == 'Nay'){
+							return "green";
+						}
+
+
+						else if (d["Party"]!=voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="D"&&d["Vote cast"] == 'Yea'){
+							return "turquoise";
+						}
+						else if (d["Party"]!=voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="D"&&d["Vote cast"] == 'Nay'){
+							return "orange";
+						}
+						else if (d["Party"]!=voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="D"&&d["Vote cast"] == 'Yea'){
+							return "green";
+						}			
+						else if (d["Party"]!=voting_data_j_sponsor_party&&voting_data_j_sponsor_party=="D"&&d["Vote cast"] == 'Nay'){
+							return "yellow";
+						}
+						 
+						// else if (d{})
+
+						else if (d["Party"]="R"&&voting_data[j]["label_text"] == "Nomination"&&d["Vote cast"] == 'Yea'){
+							return "orange";
+						}
+						else if (d["Party"]="R"&&voting_data[j]["label_text"] == "Nomination"&&d["Vote cast"] == 'Nay'){
+							return "turquoise";
+						}
+						else if (d["Party"]="D"&&voting_data[j]["label_text"] == "Nomination"&&d["Vote cast"] == 'Yes'){
+							return "yellow";
+						}
+						else if (d["Party"]="D"&&voting_data[j]["label_text"] == "Nomination"&&d["Vote cast"] == 'Nay'){
+							return "green";
+						}
+
+
+						else if(d["Vote cast"] == 'Not Voting'){
+							return "grey";
+						}
+					})
+
+					// .
 			}
-
 		 })
-		// <script type="text/javascript">
 
-			// var Senators115_Voting = 
 
 		</script>
+		<p class="cool_text_description">
+			&#9650; 
+			<br>
+			<br> "Luther Strange, replaced Jeff Sessions in the Senate"
+		</p>
 	</body>
 </html>
