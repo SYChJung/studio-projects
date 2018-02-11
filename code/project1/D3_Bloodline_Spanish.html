@@ -192,24 +192,34 @@
 			// console.log(family_tree_data);
 
 			// 2. dimensions
-			var bar_thickness = 10;
-			var gap_between_bars = 5;
+			var current_year = 2018;
 
-			var svg_width  = 1200;
-			var svg_height = 1200;
+			var width_pixel_per_year = 2;
+			var bar_thickness = 5;
+			var gap_between_bars = 5;
 			
 			var margin_left  = 25;
 			var margin_right = 50;
 			var margin_top     = 35;
 			var margin_bottom  = 25;
 
-			var padding_top = 25;
+			var padding_left  = 0;
+			var padding_right = 0;
+			var padding_top    = 25;
+			var padding_bottom = 0;
 
-			var outer_width = svg_width - margin_left - margin_right;
+			var inner_width = (current_year - family_tree_data[0]["Year of birth"]) * width_pixel_per_year;
+			var inner_height = family_tree_data.length * (bar_thickness + gap_between_bars);
+
+			var outer_width = inner_width + padding_left + padding_right;
+			var outer_height = inner_height + padding_top + padding_bottom;
+
+			var svg_width = outer_width + margin_left + margin_right;
+			var svg_height = outer_height + margin_top + margin_bottom;
 
 			// 3. scales
 			var family_tree_xscale = d3.scaleLinear()
-				.domain([1007,2017]) // need to lengthen it
+				.domain([1007,current_year]) // need to lengthen it
 				.range([0, outer_width])
 
 			;
