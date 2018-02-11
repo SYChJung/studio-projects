@@ -105,9 +105,9 @@
 		<p class="cool_text_description">
 			This is a graph showing Spanish monarchs, along with those of Aragon and Castile. I included Aragon and Castile on the graph, as the kingdom of Spain was founded by the union of Ferdinand II of Aragon and Isabella I of Castile.
 			<br>
-			The orange boxes show the lineage of Aragonese monarchs, the yellow boxes the lineage of Castilian monarchs, and turquoise boxes the lineage of Spanish monarchs.
+			The orange lines show the lineage of Aragonese monarchs, the yellow lines the lineage of Castilian monarchs, and turquoise lines the lineage of Spanish monarchs.
 			<br>
-			Each box indicates the lifespan of the monarch, of which the darker colored section indicates the reign. If you move your mouse over the box, more information shows up: name, kingdom, house, familial relationship to a previous monarch, year of birth, year of death, start year of reign, end year of reign.
+			Each line indicates the lifespan of the monarch, of which the darker colored section indicates the reign. If you move your mouse over the line, more information shows up: name, kingdom, house, familial relationship to a previous monarch, year of birth, year of death, start year of reign, end year of reign.
 		</p>
 		<div id="family_tree_chart"></div>
 
@@ -169,16 +169,18 @@
 				{"Kingdom":"Kingdom of Spain","Name":"Philip III","House":"House of Habsburg","Family":"Son of Philip II","Year of birth":1578,"Year of death":1621,"Year of Reign begin":"1598","Year of Reign end":"1621"},
 				{"Kingdom":"Kingdom of Spain","Name":"Philip IV","House":"House of Habsburg","Family":"Son of Philip III","Year of birth":1605,"Year of death":1665,"Year of Reign begin":"1621","Year of Reign end":"1665"},
 				{"Kingdom":"Kingdom of Spain","Name":"Charles II","House":"House of Habsburg","Family":"Son of Philip IV","Year of birth":1661,"Year of death":1700,"Year of Reign begin":"1665","Year of Reign end":"1700"},
-				{"Kingdom":"Kingdom of Spain","Name":"Charles III, Archduke Charles of Austria","House":"House of Disputed claimant of the House of Habsburg","Family":"great-grandson of Philip III","Year of birth":1685,"Year of death":1740,"Year of Reign begin":"1703","Year of Reign end":"1715"},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip V","House":"House of Bourbon","Family":"Great-grandson of Philip IV","Year of birth":1683,"Year of death":1746,"Year of Reign begin":"1700","Year of Reign end":"1724"},
+				// {"Kingdom":"Kingdom of Spain","Name":"Charles III, Archduke Charles of Austria","House":"House of Disputed claimant of the House of Habsburg","Family":"great-grandson of Philip III","Year of birth":1685,"Year of death":1740,"Year of Reign begin":"1703","Year of Reign end":"1715"},
+				// {"Kingdom":"Kingdom of Spain","Name":"Philip V","House":"House of Bourbon","Family":"Great-grandson of Philip IV","Year of birth":1683,"Year of death":1746,"Year of Reign begin":"1700","Year of Reign end":"1724"},
+				{"Kingdom":"Kingdom of Spain","Name":"Philip V","House":"House of Bourbon","Family":"Great-grandson of Philip IV","Year of birth":1683,"Year of death":1746,"Year of Reign begin":"1700","Year of Reign end":"1746"},
 				{"Kingdom":"Kingdom of Spain","Name":"Louis I","House":"House of Bourbon","Family":"Son of Philip V","Year of birth":1707,"Year of death":1724,"Year of Reign begin":"1724","Year of Reign end":"1724"},
-				{"Kingdom":"Kingdom of Spain","Name":"Philip V","House":"House of Bourbon","Family":"Father of Louis I","Year of birth":1683,"Year of death":1746,"Year of Reign begin":"1724","Year of Reign end":"1746"},
+				// {"Kingdom":"Kingdom of Spain","Name":"Philip V","House":"House of Bourbon","Family":"Father of Louis I","Year of birth":1683,"Year of death":1746,"Year of Reign begin":"1724","Year of Reign end":"1746"},
 				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VI","House":"House of Bourbon","Family":"Son of Philip V","Year of birth":1713,"Year of death":1759,"Year of Reign begin":"1746","Year of Reign end":"1759"},
 				{"Kingdom":"Kingdom of Spain","Name":"Charles III","House":"House of Bourbon","Family":"Son of Philip V","Year of birth":1716,"Year of death":1788,"Year of Reign begin":"1759","Year of Reign end":"1788"},
 				{"Kingdom":"Kingdom of Spain","Name":"Charles IV","House":"House of Bourbon","Family":"Son of Charles III","Year of birth":1748,"Year of death":1819,"Year of Reign begin":"1788","Year of Reign end":"1808"},
-				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII","House":"House of Bourbon","Family":"Son of Charles IV","Year of birth":1784,"Year of death":1833,"Year of Reign begin":"1808","Year of Reign end":"1808"},
+				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII","House":"House of Bourbon","Family":"Son of Charles IV","Year of birth":1784,"Year of death":1833,"Year of Reign begin":"1808","Year of Reign end":"1833"},
+				// {"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII","House":"House of Bourbon","Family":"Son of Charles IV","Year of birth":1784,"Year of death":1833,"Year of Reign begin":"1808","Year of Reign end":"1808"},
 				{"Kingdom":"Kingdom of Spain","Name":"Joseph I","House":"House of Bonaparte","Family":"The older brother of Emperor Napoleon","Year of birth":1768,"Year of death":1844,"Year of Reign begin":"1808","Year of Reign end":"1813"},
-				{"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII","House":"House of Bourbon","Family":"Son of Charles IV","Year of birth":1784,"Year of death":1833,"Year of Reign begin":"1813","Year of Reign end":"1833"},
+				// {"Kingdom":"Kingdom of Spain","Name":"Ferdinand VII","House":"House of Bourbon","Family":"Son of Charles IV","Year of birth":1784,"Year of death":1833,"Year of Reign begin":"1813","Year of Reign end":"1833"},
 				{"Kingdom":"Kingdom of Spain","Name":"Isabella II","House":"House of Bourbon","Family":"Daughter of Ferdinand VII","Year of birth":1830,"Year of death":1904,"Year of Reign begin":"1833","Year of Reign end":"1868"},
 				{"Kingdom":"Kingdom of Spain","Name":"Amadeo I","House":"House of Savoy","Family":"Elected by Cortes Generales; Great-great-grandson of Charles III","Year of birth":1845,"Year of death":1890,"Year of Reign begin":"1870","Year of Reign end":"1873"},
 				{"Kingdom":"Kingdom of Spain","Name":"Alfonso XII","House":"House of Bourbon","Family":"Son of Isabella II","Year of birth":1857,"Year of death":1885,"Year of Reign begin":"1874","Year of Reign end":"1885"},
@@ -195,9 +197,12 @@
 			var current_year = 2018;
 			var earliest_year = family_tree_data[0]["Year of birth"];
 
+			var pic_width = 60;
+			var pic_height = 60;
+
 			var width_pixel_per_year = 2;
 			var bar_thickness = 5;
-			var gap_between_bars = 5;
+			var gap_between_bars = pic_height + 5;
 			
 			var margin_left  = 25;
 			var margin_right = 50;
@@ -206,7 +211,7 @@
 
 			var padding_left  = 0;
 			var padding_right = 0;
-			var padding_top    = 25;
+			var padding_top    = gap_between_bars;
 			var padding_bottom = 0;
 
 			var inner_width = (current_year - earliest_year) * width_pixel_per_year;
@@ -380,9 +385,29 @@
 				.text(function( d, i ){ return d["Name"].toUpperCase(); })
 				// .attr("x", 10)
 				// .attr("y", 10)
-				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars) + bar_thickness-1; } )
+				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars) + bar_thickness; } )
 				.attr("x", function( d, i ){ return 10 + margin_left + family_tree_xscale(d["Year of death"]); } )
 				.attr("class", "cool_text")
+			;
+
+
+			// 9. kings face
+			var family_tree_name_image = family_tree_svg.append("g")
+				.selectAll("image").data(family_tree_data).enter().append("svg:image")
+				.attr("xlink:href", function( d, i ){
+					var filename = "pic/" + d["Year of birth"] + "_" + d["Year of death"] + "_" 
+						+ d["Name"].replace(/ /gi, "_") + ".png";
+					return filename;
+				})
+				// .attr('onerror', function() {
+				// 	// https://stackoverflow.com/questions/36081533/change-xlinkhref-link-of-svg-image-when-image-does-not-exits-in-d3js
+				// 	d3.select(this)
+				// 		.attr("xlink:href", "pic/Binette-typo.png");
+				// })
+				.attr("height", pic_height)
+				.attr("width", pic_width)
+				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars) - pic_height; } )
+				.attr("x", function( d, i ){ return margin_left + family_tree_xscale(d["Year of death"]) - pic_width; } )
 			;
 		</script>
 	</body>
