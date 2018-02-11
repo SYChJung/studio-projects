@@ -193,6 +193,7 @@
 
 			// 2. dimensions
 			var current_year = 2018;
+			var earliest_year = family_tree_data[0]["Year of birth"];
 
 			var width_pixel_per_year = 2;
 			var bar_thickness = 5;
@@ -208,7 +209,7 @@
 			var padding_top    = 25;
 			var padding_bottom = 0;
 
-			var inner_width = (current_year - family_tree_data[0]["Year of birth"]) * width_pixel_per_year;
+			var inner_width = (current_year - earliest_year) * width_pixel_per_year;
 			var inner_height = family_tree_data.length * (bar_thickness + gap_between_bars);
 
 			var outer_width = inner_width + padding_left + padding_right;
@@ -219,7 +220,7 @@
 
 			// 3. scales
 			var family_tree_xscale = d3.scaleLinear()
-				.domain([1007,current_year]) // need to lengthen it
+				.domain([earliest_year, current_year]) // need to lengthen it
 				.range([0, outer_width])
 
 			;
