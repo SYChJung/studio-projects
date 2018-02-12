@@ -210,7 +210,7 @@
 			var margin_bottom  = 25;
 
 			var padding_left  = 0;
-			var padding_right = 0;
+			var padding_right = 100;
 			var padding_top    = gap_between_bars;
 			var padding_bottom = 0;
 
@@ -226,7 +226,7 @@
 			// 3. scales
 			var family_tree_xscale = d3.scaleLinear()
 				.domain([earliest_year, current_year]) // need to lengthen it
-				.range([0, outer_width])
+				.range([0, inner_width])
 
 			;
 			var family_tree_xaxis_top = d3.axisTop()
@@ -260,10 +260,10 @@
 				.attr("height", bar_thickness)
 				.attr("width", function( d, i ){ 
 					if(d["Year of death"]){
-						return outer_width+family_tree_xscale(d["Year of death"]-d["Year of birth"]);
+						return inner_width+family_tree_xscale(d["Year of death"]-d["Year of birth"]);
 					}
 					else{
-						return outer_width+family_tree_xscale(2017-d["Year of birth"]);
+						return inner_width+family_tree_xscale(2017-d["Year of birth"]);
 					}
 				} )
 				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars); } )
@@ -287,7 +287,7 @@
 				.selectAll("rect").data(family_tree_data).enter().append("rect")
 				.attr("height", bar_thickness)
 				.attr("width", function( d, i ){
-					var height = outer_width+family_tree_xscale(d["Year of Reign end"]-d["Year of Reign begin"]);
+					var height = inner_width+family_tree_xscale(d["Year of Reign end"]-d["Year of Reign begin"]);
 					if(0 <= height){
 						return height;
 					}
@@ -321,10 +321,10 @@
 				.attr("height", bar_thickness)
 				.attr("width", function( d, i ){ 
 					if(d["Year of death"]){
-						return outer_width+family_tree_xscale(d["Year of death"]-d["Year of birth"]);
+						return inner_width+family_tree_xscale(d["Year of death"]-d["Year of birth"]);
 					}
 					else{
-						return outer_width+family_tree_xscale(2017-d["Year of birth"]);
+						return inner_width+family_tree_xscale(current_year-d["Year of birth"]);
 					}
 				} )
 				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars); } )
@@ -386,7 +386,10 @@
 				// .attr("x", 10)
 				// .attr("y", 10)
 				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars) + bar_thickness; } )
-				.attr("x", function( d, i ){ return 10 + margin_left + family_tree_xscale(d["Year of death"]); } )
+				.attr("x", function( d, i ){
+					var death_year = family_tree_xscale(d["Year of death"] || current_year);
+					return 10 + margin_left + death_year;
+				} )
 				.attr("class", "cool_text")
 			;
 
@@ -395,7 +398,7 @@
 			var family_tree_name_image = family_tree_svg.append("g")
 				.selectAll("image").data(family_tree_data).enter().append("svg:image")
 				.attr("xlink:href", function( d, i ){
-					var filename = "pic/" + d["Year of birth"] + "_" + d["Year of death"] + "_" 
+					var filename = "pic_blackandwhite/" + d["Year of birth"] + "_" + d["Year of death"] + "_" 
 						+ d["Name"].replace(/ /gi, "_") + ".png";
 					return filename;
 				})
@@ -407,7 +410,10 @@
 				.attr("height", pic_height)
 				.attr("width", pic_width)
 				.attr("y", function( d, i ){ return margin_top + padding_top + i * (bar_thickness + gap_between_bars) - pic_height; } )
-				.attr("x", function( d, i ){ return margin_left + family_tree_xscale(d["Year of death"]) - pic_width; } )
+				.attr("x", function( d, i ){
+					var death_year = family_tree_xscale(d["Year of death"] || current_year);
+					return margin_left + death_year - pic_width;
+				} )
 			;
 		</script>
 	</body>
