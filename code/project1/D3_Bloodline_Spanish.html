@@ -107,7 +107,9 @@
 			<br>
 			The orange lines show the lineage of Aragonese monarchs, the yellow lines the lineage of Castilian monarchs, and turquoise lines the lineage of Spanish monarchs.
 			<br>
-			Each line indicates the lifespan of the monarch, of which the darker colored section indicates the reign. If you move your mouse over the line, more information shows up: name, kingdom, house, familial relationship to a previous monarch, year of birth, year of death, start year of reign, end year of reign.
+			Each line indicates the lifespan of the monarch, of which the darker colored section indicates the reign.
+			<br>
+			If you move your mouse over the line or the face of the monarch, more information shows up: name, kingdom, house, familial relationship to a previous monarch, year of birth, year of death, start year of reign, end year of reign.
 		</p>
 		<div id="family_tree_chart"></div>
 
@@ -333,7 +335,7 @@
 				.attr("fill", "none")
 			;
 			var show_tooltip = function() {
-		        	var this_class = d3.select(this).attr("class");
+		        	var this_class = d3.select(this).attr("class").split(" ")[0];
 					d3.selectAll("."+this_class)
 						.classed("selected", true);
 
@@ -350,16 +352,29 @@
 							+ "<br/><span style='color:gray;font-weight:bold;'>Year of Death:</span> " + d["Year of death"]
 							+ "<br/><span style='color:gray;font-weight:bold;'>Start Year of Reign:</span> " + d["Year of Reign begin"]
 							+ "<br/><span style='color:gray;font-weight:bold;'>End Year of Reign:</span> " + d["Year of Reign end"]
-							
 						)
 		                .style("left", (d3.event.pageX) + "px")
 		                .style("top", (d3.event.pageY) + "px");
+
+		            d3.select(".cool_image.selected")
+						.attr("xlink:href", function( d, i ){
+							var filename = "pic/" + d["Year of birth"] + "_" + d["Year of death"] + "_" 
+								+ d["Name"].replace(/ /gi, "_") + ".png";
+							return filename;
+						})
+
 				};
 			var hide_tooltip = function() {
+		            d3.select(".cool_image.selected")
+						.attr("xlink:href", function( d, i ){
+							var filename = "pic_blackandwhite/" + d["Year of birth"] + "_" + d["Year of death"] + "_" 
+								+ d["Name"].replace(/ /gi, "_") + ".png";
+							return filename;
+						});
 		        	d3.select(this)
 						.classed("selected", false);
 
-					var this_class = d3.select(this).attr("class");
+		        	var this_class = d3.select(this).attr("class").split(" ")[0];
 					d3.selectAll("."+this_class)
 						.classed("selected", false);
 					tooltip_div
@@ -391,7 +406,14 @@
 					var death_year = family_tree_xscale(d["Year of death"] || current_year);
 					return 10 + margin_left + death_year;
 				} )
-				.attr("class", "cool_text")
+				.attr("class", function( d, i ){ return "cool_rect_"+i+" cool_text";} )
+				// .attr("class", "cool_text")
+			;
+			family_tree_name_text
+		        // .on('mouseover', tip.show)
+		        .on("mouseover", show_tooltip)
+		        // .on('mouseout', tip.hide)
+		        .on('mouseout', hide_tooltip)
 			;
 
 
@@ -415,7 +437,7 @@
 					var death_year = family_tree_xscale(d["Year of death"] || current_year);
 					return margin_left + death_year - pic_width;
 				} )
-				.attr("class", function( d, i ){ return "cool_rect_"+i;} )
+				.attr("class", function( d, i ){ return "cool_rect_"+i+" cool_image";} )
 			;
 			family_tree_name_image
 		        // .on('mouseover', tip.show)
@@ -423,6 +445,16 @@
 		        // .on('mouseout', tip.hide)
 		        .on('mouseout', hide_tooltip)
 			;
+
+
+			// // 10. color face
+			// var family_tree_name_image_color = family_tree_svg.append("g")
+			// 	.selectAll("image").data(family_tree_data).enter().append("svg:image")
+			// 	.attr("xlink:href", function( d, i ){
+			// 		var filename = "pic/" + d["Year of birth"] + "_" + d["Year of death"] + "_" 
+			// 			+ d["Name"].replace(/ /gi, "_") + ".png";
+			// 		return filename;
+			// 	})
 		</script>
 	</body>
 </html>
