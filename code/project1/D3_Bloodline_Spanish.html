@@ -28,53 +28,53 @@
 			}
 
 			.cool_rect_life.Spain{
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
 				fill: turquoise;
 			}
 			.cool_rect_life.Aragon{
-			    -webkit-transition: fill .2s;
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s;
+			            transition: fill .1s;
 				fill: orange;
 			}
 			.cool_rect_life.Castile{
-			    -webkit-transition: fill .2s; 
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; 
+			            transition: fill .1s;
 				fill: yellow;
 			}
 
 			.cool_rect_reign.Spain{
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
 				fill: #558;
 			}
 			.cool_rect_reign.Aragon{
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
 				fill: #c54;
 			}
 			.cool_rect_reign.Castile{
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
 				fill: #643;
 			}
 
 			.cool_rect_life.selected{
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
 				fill : #faa;
 			}
 			.cool_rect_reign.selected{
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
 				fill : #f33;
 			}
 
 			div.tooltip {	
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
 			    position: absolute;			
-			    /*width: 300px;					*/
+			    width: 300px;					
 			    /*height: 20px;					*/
 			    padding: 5px;
 			    border: 0px;		
@@ -87,11 +87,12 @@
 			    color: white;
 			    opacity: 0;
 			    pointer-events: none;
+
 			}
 			div.tooltip.selected{
-			    -webkit-transition: fill .2s; /* Safari */
-			            transition: fill .2s;
-			    opacity: 0.9;
+			    -webkit-transition: fill .1s; /* Safari */
+			            transition: fill .1s;
+			    opacity: 0.7;
 			}
 			.cool_text_description{
 				font-size:15px;
@@ -105,11 +106,13 @@
 		<p class="cool_text_description">
 			This is a graph showing Spanish monarchs, along with those of Aragon and Castile. I included Aragon and Castile on the graph, as the kingdom of Spain was founded by the union of Ferdinand II of Aragon and Isabella I of Castile.
 			<br>
-			The orange lines show the lineage of Aragonese monarchs, the yellow lines the lineage of Castilian monarchs, and turquoise lines the lineage of Spanish monarchs.
+			The <span style="font-weight:bold; color:orange;">orange</span> lines show the lineage of Aragonese monarchs,
+			the <span style="font-weight:bold; color:yellow;">yellow</span> lines the lineage of Castilian monarchs,
+			and <span style="font-weight:bold; color:turquoise;">turquoise</span> lines the lineage of Spanish monarchs.
 			<br>
 			Each line indicates the lifespan of the monarch, of which the darker colored section indicates the reign.
 			<br>
-			If you move your mouse over the line or the face of the monarch, more information shows up: name, kingdom, house, familial relationship to a previous monarch, year of birth, year of death, start year of reign, end year of reign.
+			If you move your mouse over the monarch, more information shows up: name, kingdom, house, familial relationship to a previous monarch, year of birth, year of death, start year of reign, end year of reign.
 		</p>
 		<div id="family_tree_chart"></div>
 
@@ -447,14 +450,6 @@
 			;
 
 
-			// // 10. color face
-			// var family_tree_name_image_color = family_tree_svg.append("g")
-			// 	.selectAll("image").data(family_tree_data).enter().append("svg:image")
-			// 	.attr("xlink:href", function( d, i ){
-			// 		var filename = "pic/" + d["Year of birth"] + "_" + d["Year of death"] + "_" 
-			// 			+ d["Name"].replace(/ /gi, "_") + ".png";
-			// 		return filename;
-			// 	})
 		</script>
 	</body>
 </html>
