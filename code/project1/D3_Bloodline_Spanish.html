@@ -27,20 +27,20 @@
 				font-family:verdana;
 			}
 
-			.cool_rect_life{
-				fill: turquoise;
-			}
 			.cool_rect_life.Spain{
 			    -webkit-transition: fill .2s; /* Safari */
 			            transition: fill .2s;
+				fill: turquoise;
 			}
 			.cool_rect_life.Aragon{
 			    -webkit-transition: fill .2s;
 			            transition: fill .2s;
+				fill: orange;
 			}
 			.cool_rect_life.Castile{
 			    -webkit-transition: fill .2s; 
 			            transition: fill .2s;
+				fill: yellow;
 			}
 
 			.cool_rect_reign.Spain{
@@ -332,9 +332,7 @@
 				.attr("class", function( d, i ){ return "cool_rect_"+i; } )
 				.attr("fill", "none")
 			;
-			family_tree_invisible_rect
-		        // .on('mouseover', tip.show)
-		        .on("mouseover", function() {
+			var show_tooltip = function() {
 		        	var this_class = d3.select(this).attr("class");
 					d3.selectAll("."+this_class)
 						.classed("selected", true);
@@ -356,19 +354,22 @@
 						)
 		                .style("left", (d3.event.pageX) + "px")
 		                .style("top", (d3.event.pageY) + "px");
-				})
-		        // .on('mouseout', tip.hide)
-		        .on('mouseout', function() {
+				};
+			var hide_tooltip = function() {
 		        	d3.select(this)
 						.classed("selected", false);
 
 					var this_class = d3.select(this).attr("class");
 					d3.selectAll("."+this_class)
 						.classed("selected", false);
-
 					tooltip_div
 						.classed("selected", false);
-				})
+				};
+			family_tree_invisible_rect
+		        // .on('mouseover', tip.show)
+		        .on("mouseover", show_tooltip)
+		        // .on('mouseout', tip.hide)
+		        .on('mouseout', hide_tooltip)
 			;
 
 
@@ -414,6 +415,13 @@
 					var death_year = family_tree_xscale(d["Year of death"] || current_year);
 					return margin_left + death_year - pic_width;
 				} )
+				.attr("class", function( d, i ){ return "cool_rect_"+i;} )
+			;
+			family_tree_name_image
+		        // .on('mouseover', tip.show)
+		        .on("mouseover", show_tooltip)
+		        // .on('mouseout', tip.hide)
+		        .on('mouseout', hide_tooltip)
 			;
 		</script>
 	</body>
